@@ -17,8 +17,6 @@ class PermissionController extends BaseAdminController
     {
         parent::__construct();
 
-        $this->middleware('has-permission:view-permissions');
-
         $this->repository = $repository;
 
         $this->getDashboardMenu($this->module . '-permissions');

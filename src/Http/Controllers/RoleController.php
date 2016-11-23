@@ -18,8 +18,6 @@ class RoleController extends BaseAdminController
     {
         parent::__construct();
 
-        $this->middleware('has-permission:view-roles');
-
         $this->repository = $roleRepository;
 
         $this->getDashboardMenu($this->module . '-roles');
@@ -37,7 +35,7 @@ class RoleController extends BaseAdminController
     {
         $this->assets->addJavascripts('jquery-datatables');
 
-        $this->setPageTitle('Roles', 'All avaiable roles');
+        $this->setPageTitle('Roles', 'All available roles');
 
         $this->dis['dataTableColumns'] = [
             'headings' => [
@@ -120,7 +118,12 @@ class RoleController extends BaseAdminController
         $data = [];
         if ($this->request->get('customActionType', null) == 'group_action') {
 
-            $this->middleware('has-permission:delete-roles');
+            if(!$this->userRepository->hasPermission($this->loggedInUser, 'delete-roles')) {
+                return [
+                    'customActionMessage' => 'You do not have permission',
+                    'customActionStatus' => 'danger',
+                ];
+            }
 
             $ids = (array)$this->request->get('id', []);
 
@@ -153,8 +156,6 @@ class RoleController extends BaseAdminController
      */
     public function getCreate(PermissionContract $permissionRepository)
     {
-        $this->middleware('has-permission:create-roles');
-
         $this->dis['superAdminRole'] = false;
 
         $this->setPageTitle('Create role');
@@ -249,6 +250,10 @@ class RoleController extends BaseAdminController
 
     protected function createRole()
     {
+        if(!$this->userRepository->hasPermission($this->loggedInUser, 'create-roles')) {
+            return redirect()->to(route('admin::error', ['code' => 403]));
+        }
+
         return $this->repository->createRole(array_merge($this->request->except(['_token', '_continue_edit']), [
             'permissions' => ($this->request->exists('permissions') ? $this->request->get('permissions') : [])
         ]));
