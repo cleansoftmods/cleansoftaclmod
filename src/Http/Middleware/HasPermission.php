@@ -19,7 +19,7 @@ class HasPermission
      */
     public function handle($request, Closure $next, ...$permissions)
     {
-        if (!$request->user()->hasPermission($permissions)) {
+        if ($request->user() && !$request->user()->hasPermission($permissions)) {
             return redirect()->to(route('admin::error', ['code' => 403]));
         }
 
