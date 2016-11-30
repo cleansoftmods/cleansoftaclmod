@@ -35,6 +35,7 @@ class InstallModuleServiceProvider extends ServiceProvider
             ->registerPermission('Create roles', 'create-roles', $this->module)
             ->registerPermission('Edit roles', 'edit-roles', $this->module)
             ->registerPermission('Delete roles', 'delete-roles', $this->module)
-            ->registerPermission('View permissions', 'view-permissions', $this->module);
+            ->registerPermission('View permissions', 'view-permissions', $this->module)
+            ->registerPermission('Assign roles', 'assign-roles', $this->module);
     }
 }

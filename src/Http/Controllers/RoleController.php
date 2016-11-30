@@ -93,7 +93,7 @@ class RoleController extends BaseAdminController
 
                 /*Buttons*/
                 $editBtn = link_to($editLink, 'Edit', ['class' => 'btn btn-outline green btn-sm']);
-                $deleteBtn = ($item->status != 'deleted') ? form()->button('<i class="fa fa-trash"></i>', [
+                $deleteBtn = ($item->status != 'deleted') ? form()->button('Delete', [
                     'title' => 'Delete this item',
                     'data-ajax' => $deleteLink,
                     'data-method' => 'DELETE',
