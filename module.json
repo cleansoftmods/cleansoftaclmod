@@ -4,6 +4,6 @@
     "author": "Tedozi Manson - <a href=\"https://github.com/duyphan2502\">https://github.com/duyphan2502</a>",
     "description": "Access control list package. Handle user permissions, roles.",
     "namespace": "WebEd\\Base\\ACL",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "autoload": "psr-4"
 }

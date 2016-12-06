@@ -76,7 +76,7 @@
                     <div class="form-group">
                         <label class="control-label">Related permissions<span class="required"> * </span></label>
                         <div class="scroller form-control height-auto" style="max-height: 400px;"
-                             data-always-visible="1" data-rail-visible1="1">
+                             data-always-visible="1" data-rail-visible="1">
                             <div class="p10">
                                 @foreach($permissions as $key => $row)
                                     <div class="checkbox-group">
