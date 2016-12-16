@@ -44,9 +44,9 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
             ->delete();
 
         if (!$result['error']) {
-            return $this->setMessages($result['messages'], false, $this::SUCCESS_NO_CONTENT_CODE);
+            return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
         }
-        return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+        return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
     }
 
     /**
@@ -58,7 +58,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
         $result = $this->editWithValidate(0, $data, true, false);
 
         if ($result['error']) {
-            return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
         }
 
         /**
@@ -68,7 +68,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
             $this->syncPermissions($result['data'], $data['permissions']);
         }
 
-        $result = $this->setMessages('Create role success', false, $this::SUCCESS_CODE, $result['data']);
+        $result = $this->setMessages('Create role success', false, \Constants::SUCCESS_CODE, $result['data']);
 
         return $result;
     }
@@ -83,7 +83,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
         $result = $this->editWithValidate($id, $data, false, true);
 
         if ($result['error']) {
-            return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
         }
 
         /**
@@ -93,7 +93,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
             $this->syncPermissions($result['data'], (array)$data['permissions']);
         }
 
-        $result = $this->setMessages('Update role success', false, $this::SUCCESS_CODE, $result['data']);
+        $result = $this->setMessages('Update role success', false, \Constants::SUCCESS_CODE, $result['data']);
 
         return $result;
     }

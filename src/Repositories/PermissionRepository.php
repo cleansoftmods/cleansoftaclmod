@@ -32,15 +32,15 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionC
             ], true, false);
             if (!$result['error']) {
                 if (!$force) {
-                    return $this->setMessages($result['messages'], false, $this::SUCCESS_NO_CONTENT_CODE);
+                    return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
                 }
             }
             if (!$force) {
-                return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+                return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages('Permission alias exists', true, $this::ERROR_CODE);
+            return $this->setMessages('Permission alias exists', true, \Constants::ERROR_CODE);
         }
         return $this;
     }
@@ -55,11 +55,11 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionC
         $result = $this->where('slug', 'IN', (array)$alias)->delete();
         if (!$result['error']) {
             if (!$force) {
-                return $this->setMessages($result['messages'], false, $this::SUCCESS_NO_CONTENT_CODE);
+                return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
         }
         return $this;
     }
@@ -74,11 +74,11 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionC
         $result = $this->where('module', 'IN', (array)$module)->delete();
         if (!$result['error']) {
             if (!$force) {
-                return $this->setMessages($result['messages'], false, $this::SUCCESS_NO_CONTENT_CODE);
+                return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages($result['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
         }
         return $this;
     }
