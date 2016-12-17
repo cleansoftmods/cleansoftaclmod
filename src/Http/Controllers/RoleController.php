@@ -163,7 +163,7 @@ class RoleController extends BaseAdminController
 
         $this->dis['checkedPermissions'] = [];
 
-        $this->dis['permissions'] = $permissionRepository->all();
+        $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
 
         $this->dis['currentId'] = 0;
 
@@ -208,7 +208,7 @@ class RoleController extends BaseAdminController
             $this->dis['superAdminRole'] = true;
         }
 
-        $this->dis['permissions'] = $permissionRepository->all();
+        $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
 
         $this->dis['currentId'] = $id;
 
