@@ -9,19 +9,7 @@
 @endsection
 
 @section('js-init')
-    <script>
-        $(window).load(function () {
-            WebEd.DataTableAjax.init($('table.datatables'), {
-                dataTableParams: {
-                    ajax: {
-                        url: '{!! route('admin::acl-permissions.index.post') !!}',
-                        method: 'POST'
-                    },
-                    columns: {!! $dataTableHeadings or '[]' !!}
-                }
-            });
-        });
-    </script>
+
 @endsection
 
 @section('content')
@@ -33,7 +21,8 @@
             </h3>
         </div>
         <div class="box-body">
-            @include('webed-core::admin._components.datatables', (isset($dataTableColumns) ? $dataTableColumns : []))
+            {!! $dataTable or '' !!}
         </div>
     </div>
+    @php do_action('meta_boxes', 'main', 'acl-permissions.index') @endphp
 @endsection

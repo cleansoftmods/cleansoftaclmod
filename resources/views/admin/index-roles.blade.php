@@ -9,19 +9,7 @@
 @endsection
 
 @section('js-init')
-    <script>
-        $(window).load(function () {
-            WebEd.DataTableAjax.init($('table.datatables'), {
-                dataTableParams: {
-                    ajax: {
-                        url: '{!! route('admin::acl-roles.index.get-json') !!}',
-                        method: 'POST'
-                    },
-                    columns: {!! $dataTableHeadings or '[]' !!}
-                }
-            });
-        });
-    </script>
+
 @endsection
 
 @section('content')
@@ -40,7 +28,7 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    @include('webed-core::admin._components.datatables', (isset($dataTableColumns) ? $dataTableColumns : []))
+                    {!! $dataTable or '' !!}
                 </div>
             </div>
             @php do_action('meta_boxes', 'main', 'acl-roles.index') @endphp

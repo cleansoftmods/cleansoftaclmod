@@ -1,9 +1,11 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
+use WebEd\Base\ACL\Http\DataTables\RolesListDataTable;
 use WebEd\Base\Core\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
 use WebEd\Base\Core\Support\DataTable\DataTables;
+use Yajra\Datatables\Engines\BaseEngine;
 
 class RoleController extends BaseAdminController
 {
@@ -31,82 +33,25 @@ class RoleController extends BaseAdminController
      * Get index page
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getIndex()
+    public function getIndex(RolesListDataTable $rolesListDataTable)
     {
-        $this->assets->addJavascripts('jquery-datatables');
-
         $this->setPageTitle('Roles', 'All available roles');
 
-        $this->dis['dataTableColumns'] = [
-            'headings' => [
-                ['name' => 'Name', 'width' => '50%'],
-                ['name' => 'Alias', 'width' => '30%'],
-                ['name' => 'Actions', 'width' => '20%']
-            ],
-            'filter' => [
-                1 => form()->text('name', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-                2 => form()->text('slug', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-            ],
-            'tableActions' => form()->select('', [
-                '' => 'Select' . '...',
-                'deleted' => 'Deleted',
-            ], '', [
-                'class' => 'table-group-action-input form-control input-inline input-small input-sm'
-            ])
-        ];
-
-        $this->dis['dataTableHeadings'] = json_encode([
-            ['data' => 'id', 'name' => 'id', 'searchable' => false, 'orderable' => false],
-            ['data' => 'name', 'name' => 'name'],
-            ['data' => 'slug', 'name' => 'slug'],
-            ['data' => 'actions', 'name' => 'actions', 'searchable' => false, 'orderable' => false],
-        ]);
+        $this->dis['dataTable'] = $rolesListDataTable->run();
 
         return do_filter('acl-roles.index.get', $this)->viewAdmin('index-roles');
     }
 
     /**
      * Get all roles
-     * @param DataTables $dataTable
+     * @param RolesListDataTable|BaseEngine $rolesListDataTable
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postListing(DataTables $dataTable)
+    public function postListing(RolesListDataTable $rolesListDataTable)
     {
-        $repo = $dataTable
-            ->of($this->repository)
-            ->with($this->groupAction())
-            ->editColumn('id', function ($item) {
-                return form()->customCheckbox([
-                    ['id[]', $item->id]
-                ]);
-            })
-            ->addColumn('actions', function ($item) {
-                /*Edit link*/
-                $deleteLink = route('admin::acl-roles.delete.delete', ['id' => $item->id]);
-                $editLink = route('admin::acl-roles.edit.get', ['id' => $item->id]);
+        $data = $rolesListDataTable->with($this->groupAction());
 
-                /*Buttons*/
-                $editBtn = link_to($editLink, 'Edit', ['class' => 'btn btn-outline green btn-sm']);
-                $deleteBtn = ($item->status != 'deleted') ? form()->button('Delete', [
-                    'title' => 'Delete this item',
-                    'data-ajax' => $deleteLink,
-                    'data-method' => 'DELETE',
-                    'data-toggle' => 'confirmation',
-                    'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                ]) : '';
-
-                $deleteBtn = ($item->status != 'deleted') ? $deleteBtn : '';
-
-                return $editBtn . $deleteBtn;
-            });
-        return do_filter('datatables.acl-roles.index.post', $repo, $this)
-            ->make(true);
+        return do_filter('datatables.acl-roles.index.post', $data, $this);
     }
 
     /**

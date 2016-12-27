@@ -1,8 +1,8 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
+use WebEd\Base\ACL\Http\DataTables\PermissionsListDataTable;
 use WebEd\Base\Core\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
-use WebEd\Base\Core\Support\DataTable\DataTables;
 
 class PermissionController extends BaseAdminController
 {
@@ -21,55 +21,20 @@ class PermissionController extends BaseAdminController
 
         $this->getDashboardMenu($this->module . '-permissions');
 
-        $this->breadcrumbs
-            ->addLink('ACL');
+        $this->breadcrumbs->addLink('ACL')->addLink('Permissions', route('admin::acl-permissions.index.get'));;
     }
 
-    public function getIndex()
+    public function getIndex(PermissionsListDataTable $permissionsListDataTable)
     {
-        $this->assets->addJavascripts('jquery-datatables');
-
         $this->setPageTitle('Permissions', 'All available permissions');
 
-        $this->breadcrumbs
-            ->addLink('Permissions', route('admin::acl-permissions.index.get'));
-
-        $this->dis['dataTableColumns'] = [
-            'headings' => [
-                ['name' => 'Name', 'width' => '30%'],
-                ['name' => 'Module', 'width' => '30%'],
-                ['name' => 'Alias', 'width' => '20%'],
-            ],
-            'filter' => [
-                0 => form()->text('slug', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-                1 => form()->text('module', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-                2 => form()->text('name', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-            ]
-        ];
-
-        $this->dis['dataTableHeadings'] = json_encode([
-            ['data' => 'name', 'name' => 'name'],
-            ['data' => 'module', 'name' => 'module'],
-            ['data' => 'slug', 'name' => 'slug'],
-        ]);
+        $this->dis['dataTable'] = $permissionsListDataTable->run();
 
         return do_filter('acl-permissions.index.get', $this)->viewAdmin('index-permissions');
     }
 
-    public function postListing(DataTables $dataTable)
+    public function postListing(PermissionsListDataTable $permissionsListDataTable)
     {
-        $data = $dataTable
-            ->of($this->repository);
-        return do_filter('datatables.acl-permissions.index.post', $data, $this)
-            ->make(true);
+        return do_filter('datatables.acl-permissions.index.post', $permissionsListDataTable, $this);
     }
 }
