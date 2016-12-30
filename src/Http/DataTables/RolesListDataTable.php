@@ -28,16 +28,21 @@ class RolesListDataTable extends AbstractDataTables
         $this->setAjaxUrl(route('admin::acl-roles.index.get-json'), 'POST');
 
         $this
+            ->addHeading('id', 'ID', '5%')
             ->addHeading('name', 'Name', '50%')
             ->addHeading('alias', 'Alias', '30%')
             ->addHeading('actions', 'Actions', '20%');
 
         $this
-            ->addFilter(1, form()->text('name', '', [
+            ->addFilter(1, form()->text('id', '', [
+                'class' => 'form-control form-filter input-sm',
+                'placeholder' => '...'
+            ]))
+            ->addFilter(2, form()->text('name', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => 'Search...'
             ]))
-            ->addFilter(2, form()->text('slug', '', [
+            ->addFilter(3, form()->text('slug', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => 'Search...'
             ]));
@@ -49,6 +54,7 @@ class RolesListDataTable extends AbstractDataTables
 
         $this->setColumns([
             ['data' => 'id', 'name' => 'id', 'searchable' => false, 'orderable' => false],
+            ['data' => 'viewID', 'name' => 'id'],
             ['data' => 'name', 'name' => 'name'],
             ['data' => 'slug', 'name' => 'slug'],
             ['data' => 'actions', 'name' => 'actions', 'searchable' => false, 'orderable' => false],
@@ -67,6 +73,9 @@ class RolesListDataTable extends AbstractDataTables
                 return form()->customCheckbox([
                     ['id[]', $item->id]
                 ]);
+            })
+            ->addColumn('viewID', function ($item) {
+                return $item->id;
             })
             ->addColumn('actions', function ($item) {
                 /*Edit link*/

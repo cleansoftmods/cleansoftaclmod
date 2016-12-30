@@ -11,7 +11,7 @@ class PermissionsListDataTable extends AbstractDataTables
     {
         $this->repository = $repository;
 
-        $this->repository->select('name', 'slug', 'module');
+        $this->repository->select('name', 'slug', 'module', 'id');
 
         parent::__construct();
     }
@@ -24,25 +24,28 @@ class PermissionsListDataTable extends AbstractDataTables
         $this->setAjaxUrl(route('admin::acl-permissions.index.post'), 'POST');
 
         $this
+            ->addHeading('id', 'ID', '1%')
             ->addHeading('name', 'Name', '35%')
+            ->addHeading('alias', 'Alias', '30%')
             ->addHeading('module', 'Module', '35%')
-            ->addHeading('alias', 'Alias', '30%');
+        ;
 
         $this
-            ->addFilter(0, form()->text('name', '', [
+            ->addFilter(1, form()->text('name', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => 'Search...'
             ]))
-            ->addFilter(1, form()->text('module', '', [
+            ->addFilter(2, form()->text('module', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => 'Search...'
             ]))
-            ->addFilter(2, form()->text('slug', '', [
+            ->addFilter(3, form()->text('slug', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => 'Search...'
             ]));
 
         $this->setColumns([
+            ['data' => 'id', 'name' => 'id'],
             ['data' => 'name', 'name' => 'name'],
             ['data' => 'slug', 'name' => 'slug'],
             ['data' => 'module', 'name' => 'module'],

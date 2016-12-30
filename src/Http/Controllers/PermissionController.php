@@ -30,7 +30,7 @@ class PermissionController extends BaseAdminController
 
         $this->dis['dataTable'] = $permissionsListDataTable->run();
 
-        return do_filter('acl-permissions.index.get', $this)->viewAdmin('index-permissions');
+        return do_filter('acl-permissions.index.get', $this)->viewAdmin('permissions.index');
     }
 
     public function postListing(PermissionsListDataTable $permissionsListDataTable)
