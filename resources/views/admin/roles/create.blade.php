@@ -56,7 +56,7 @@
                     </h3>
                 </div>
                 <div class="box-body">
-                    {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::acl-roles.edit.post', ['id' => $currentId])]) !!}
+                    {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::acl-roles.create.post')]) !!}
                     <div class="form-group">
                         <label class="control-label">Name<span class="required"> * </span></label>
                         <input type="text"
@@ -69,7 +69,6 @@
                         <label class="control-label">Alias<span class="required"> * </span></label>
                         <input type="text" name="slug"
                                value="{{ $object->slug or '' }}"
-                               {{ $currentId ? 'disabled' : '' }}
                                class="form-control"
                                autocomplete="off">
                     </div>
@@ -95,7 +94,7 @@
                         </div>
                     </div>
                     <div class="form-group text-right">
-                        <button class="btn btn-success" type="submit">
+                        <button class="btn btn-primary" type="submit">
                             <i class="fa fa-check"></i> Save
                         </button>
                         <button class="btn btn-success" type="submit" name="_continue_edit"
@@ -106,7 +105,7 @@
                     {!! Form::close() !!}
                 </div>
             </div>
-            @php do_action('meta_boxes', 'main', 'acl-roles.edit', (isset($object) ? $object : null)) @endphp
+            @php do_action('meta_boxes', 'main', 'acl-roles.create', $object) @endphp
         </div>
     </div>
 @endsection

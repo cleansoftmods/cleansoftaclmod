@@ -1,8 +1,8 @@
 <?php namespace WebEd\Base\ACL\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use WebEd\Base\ACL\Models\EloquentPermission;
-use WebEd\Base\ACL\Models\EloquentRole;
+use WebEd\Base\ACL\Models\Permission;
+use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
 use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
 use WebEd\Base\ACL\Repositories\PermissionRepository;
@@ -30,7 +30,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(RoleContract::class, function () {
-            $repository = new RoleRepository(new EloquentRole);
+            $repository = new RoleRepository(new Role);
 
             if (config('webed-caching.repository.enabled')) {
                 return new RoleRepositoryCacheDecorator($repository);
@@ -39,7 +39,7 @@ class RepositoryServiceProvider extends ServiceProvider
             return $repository;
         });
         $this->app->bind(PermissionContract::class, function () {
-            $repository = new PermissionRepository(new EloquentPermission);
+            $repository = new PermissionRepository(new Permission);
 
             if (config('webed-caching.repository.enabled')) {
                 return new PermissionRepositoryCacheDecorator($repository);

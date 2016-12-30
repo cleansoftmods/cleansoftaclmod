@@ -25,7 +25,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
     protected $cannotDelete = ['super-admin'];
 
     /**
-     * @param \WebEd\Base\ACL\Models\EloquentRole $model
+     * @param \WebEd\Base\ACL\Models\Role $model
      * @param \Illuminate\Database\Eloquent\Collection|array $data
      */
     public function syncPermissions($model, $data)
@@ -89,8 +89,8 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
         /**
          * Sync permissions
          */
-        if (isset($data['permissions'])) {
-            $this->syncPermissions($result['data'], (array)$data['permissions']);
+        if (isset($data['permissions']) && is_array($data['permissions'])) {
+            $this->syncPermissions($result['data'], $data['permissions']);
         }
 
         $result = $this->setMessages('Update role success', false, \Constants::SUCCESS_CODE, $result['data']);

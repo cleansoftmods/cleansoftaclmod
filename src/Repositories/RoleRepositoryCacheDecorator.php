@@ -37,7 +37,7 @@ class RoleRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param \WebEd\Base\ACL\Models\EloquentRole $model
+     * @param \WebEd\Base\ACL\Models\Role $model
      * @param \Illuminate\Database\Eloquent\Collection|array $data
      */
     public function syncPermissions($model, $data)

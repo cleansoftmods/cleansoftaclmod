@@ -4,7 +4,7 @@ use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
 use WebEd\Base\Core\Models\EloquentBase as BaseModel;
 use WebEd\Base\Users\Models\EloquentUser;
 
-class EloquentRole extends BaseModel implements RoleModelContract
+class Role extends BaseModel implements RoleModelContract
 {
     protected $table = 'roles';
 
@@ -12,14 +12,14 @@ class EloquentRole extends BaseModel implements RoleModelContract
 
     protected $fillable = ['name', 'slug'];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function permissions()
     {
-        return $this->belongsToMany(EloquentPermission::class, 'roles_permissions', 'role_id', 'permission_id');
+        return $this->belongsToMany(Permission::class, 'roles_permissions', 'role_id', 'permission_id');
     }
 
     /**

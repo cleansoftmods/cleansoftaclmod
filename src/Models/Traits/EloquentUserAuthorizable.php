@@ -8,7 +8,7 @@ trait EloquentUserAuthorizable
      */
     public function roles()
     {
-        return $this->belongsToMany(\WebEd\Base\ACL\Models\EloquentRole::class, 'users_roles', 'user_id', 'role_id');
+        return $this->belongsToMany(\WebEd\Base\ACL\Models\Role::class, 'users_roles', 'user_id', 'role_id');
     }
 
     /**

@@ -17,6 +17,12 @@ class CreateRolesTable extends Migration
             $table->increments('id');
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->timestamps();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
         });
 
         Schema::create('permissions', function (Blueprint $table) {
