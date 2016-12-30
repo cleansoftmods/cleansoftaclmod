@@ -11,11 +11,15 @@ class RoleRepository extends AbstractBaseRepository implements RoleContract, Cac
     protected $rules = [
         'name' => 'required|between:3,100|string',
         'slug' => 'required|between:3,100|unique:roles|alpha_dash',
+        'created_by' => 'required|min:0',
+        'updated_by' => 'required|min:0',
     ];
 
     protected $editableFields = [
         'name',
         'slug',
+        'created_by',
+        'updated_by',
     ];
 
     /**

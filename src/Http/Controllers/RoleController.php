@@ -135,6 +135,8 @@ class RoleController extends BaseAdminController
             'name' => $request->get('name'),
             'slug' => $request->get('slug'),
             'permissions' => ($request->exists('permissions') ? $request->get('permissions') : []),
+            'created_by' => $this->loggedInUser->id,
+            'updated_by' => $this->loggedInUser->id,
         ];
         $result = $this->repository->createRole($data);
 
@@ -209,6 +211,7 @@ class RoleController extends BaseAdminController
         $data = [
             'name' => $request->get('name'),
             'permissions' => ($request->exists('permissions') ? $request->get('permissions') : []),
+            'updated_by' => $this->loggedInUser->id,
         ];
 
         $result = $this->repository->updateRole($item, $data);
