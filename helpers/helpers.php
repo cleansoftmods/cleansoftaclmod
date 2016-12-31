@@ -1,5 +1,5 @@
 <?php
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 
 if (!function_exists('acl_permission')) {
     /**
@@ -9,6 +9,6 @@ if (!function_exists('acl_permission')) {
      */
     function acl_permission()
     {
-        return app(PermissionContract::class);
+        return app(PermissionRepositoryContract::class);
     }
 }

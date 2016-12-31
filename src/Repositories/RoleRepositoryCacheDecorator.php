@@ -1,9 +1,9 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
-use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
+use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
 
-class RoleRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements RoleContract
+class RoleRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements RoleRepositoryContract
 {
     /**
      * @param array|int $id
@@ -50,7 +50,7 @@ class RoleRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param int|\WebEd\Base\ACL\Repositories\Contracts\RoleContract $id
+     * @param int|\WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract $id
      * @return array
      */
     public function getRelatedPermissions($id)

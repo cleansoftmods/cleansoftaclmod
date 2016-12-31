@@ -3,10 +3,10 @@
 use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 
-use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
+use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class RoleRepository extends AbstractBaseRepository implements RoleContract, CacheableContract
+class RoleRepository extends AbstractBaseRepository implements RoleRepositoryContract, CacheableContract
 {
     protected $rules = [
         'name' => 'required|between:3,100|string',

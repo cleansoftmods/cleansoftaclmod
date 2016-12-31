@@ -1,6 +1,6 @@
 <?php namespace WebEd\Base\ACL\Models\Traits;
 
-trait EloquentUserAuthorizable
+trait UserAuthorizable
 {
     /**
      * Set relationship

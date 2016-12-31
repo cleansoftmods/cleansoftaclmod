@@ -4,8 +4,8 @@ use WebEd\Base\ACL\Http\DataTables\RolesListDataTable;
 use WebEd\Base\ACL\Http\Requests\CreateRoleRequest;
 use WebEd\Base\ACL\Http\Requests\UpdateRoleRequest;
 use WebEd\Base\Core\Http\Controllers\BaseAdminController;
-use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 use WebEd\Base\Core\Support\DataTable\DataTables;
 use Yajra\Datatables\Engines\BaseEngine;
 
@@ -18,7 +18,7 @@ class RoleController extends BaseAdminController
      */
     protected $repository;
 
-    public function __construct(RoleContract $roleRepository)
+    public function __construct(RoleRepositoryContract $roleRepository)
     {
         parent::__construct();
 
@@ -101,7 +101,7 @@ class RoleController extends BaseAdminController
      * @param \WebEd\Base\ACL\Repositories\PermissionRepository $permissionRepository
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function getCreate(PermissionContract $permissionRepository)
+    public function getCreate(PermissionRepositoryContract $permissionRepository)
     {
         $this->dis['superAdminRole'] = false;
 
@@ -164,7 +164,7 @@ class RoleController extends BaseAdminController
      * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function getEdit(PermissionContract $permissionRepository, $id)
+    public function getEdit(PermissionRepositoryContract $permissionRepository, $id)
     {
         $this->dis['superAdminRole'] = false;
 

@@ -1,9 +1,9 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
 
-class PermissionRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements PermissionContract
+class PermissionRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements PermissionRepositoryContract
 {
     /**
      * Register permission

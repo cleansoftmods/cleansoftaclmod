@@ -2,10 +2,10 @@
 
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class PermissionRepository extends AbstractBaseRepository implements PermissionContract, CacheableContract
+class PermissionRepository extends AbstractBaseRepository implements PermissionRepositoryContract, CacheableContract
 {
     protected $rules = [
         'name' => 'required|between:3,100|string',

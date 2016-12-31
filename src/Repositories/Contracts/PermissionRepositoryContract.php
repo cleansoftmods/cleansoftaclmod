@@ -1,6 +1,6 @@
 <?php namespace WebEd\Base\ACL\Repositories\Contracts;
 
-interface PermissionContract
+interface PermissionRepositoryContract
 {
     /**
      * Register permission

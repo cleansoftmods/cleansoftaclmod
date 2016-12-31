@@ -1,13 +1,13 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
 
 class PermissionsListDataTable extends AbstractDataTables
 {
     protected $repository;
 
-    public function __construct(PermissionContract $repository)
+    public function __construct(PermissionRepositoryContract $repository)
     {
         $this->repository = $repository;
 

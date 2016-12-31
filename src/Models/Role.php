@@ -2,7 +2,7 @@
 
 use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
 use WebEd\Base\Core\Models\EloquentBase as BaseModel;
-use WebEd\Base\Users\Models\EloquentUser;
+use WebEd\Base\Users\Models\User;
 
 class Role extends BaseModel implements RoleModelContract
 {
@@ -27,7 +27,7 @@ class Role extends BaseModel implements RoleModelContract
      */
     public function users()
     {
-        return $this->belongsToMany(EloquentUser::class, 'users_roles', 'role_id', 'user_id');
+        return $this->belongsToMany(User::class, 'users_roles', 'role_id', 'user_id');
     }
 
     public function setSlugAttribute($value)

@@ -1,6 +1,6 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
-use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
+use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\RoleRepository;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
 
@@ -11,7 +11,7 @@ class RolesListDataTable extends AbstractDataTables
      */
     protected $repository;
 
-    public function __construct(RoleContract $repository)
+    public function __construct(RoleRepositoryContract $repository)
     {
         $this->repository = $repository;
 

@@ -1,6 +1,6 @@
 <?php namespace WebEd\Base\ACL\Repositories\Contracts;
 
-interface RoleContract
+interface RoleRepositoryContract
 {
     /**
      * @param int|array $id

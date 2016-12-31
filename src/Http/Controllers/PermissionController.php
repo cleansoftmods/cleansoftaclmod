@@ -2,7 +2,7 @@
 
 use WebEd\Base\ACL\Http\DataTables\PermissionsListDataTable;
 use WebEd\Base\Core\Http\Controllers\BaseAdminController;
-use WebEd\Base\ACL\Repositories\Contracts\PermissionContract;
+use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 
 class PermissionController extends BaseAdminController
 {
@@ -13,7 +13,7 @@ class PermissionController extends BaseAdminController
      */
     protected $repository;
 
-    public function __construct(PermissionContract $repository)
+    public function __construct(PermissionRepositoryContract $repository)
     {
         parent::__construct();
 
