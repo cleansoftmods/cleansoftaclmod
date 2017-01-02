@@ -29,8 +29,13 @@ trait UserAuthorizable
         if ($this->isSuperAdmin()) {
             return true;
         }
+
         if(!is_array($roles)) {
             $roles = func_get_args();
+        }
+
+        if (!$roles) {
+            return true;
         }
 
         $relatedRoles = $this->roles()->whereIn('slug', $roles)->count();
@@ -49,8 +54,13 @@ trait UserAuthorizable
         if ($this->isSuperAdmin()) {
             return true;
         }
+
         if(!is_array($permissions)) {
             $permissions = func_get_args();
+        }
+
+        if (!$permissions) {
+            return true;
         }
 
         $count = static::join('users_roles', 'users_roles.user_id', '=', $this->getTable() . '.id')
@@ -58,7 +68,7 @@ trait UserAuthorizable
             ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
             ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
             ->where('users.id', '=', $this->id)
-            ->whereIn('permissions.slug', $permissions)
+            ->whereIn('permissions.slug', array_values($permissions))
             ->distinct()
             ->groupBy('permissions.id')
             ->select('permissions.id')

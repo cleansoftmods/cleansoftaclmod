@@ -42,6 +42,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
             'font_icon' => 'icon-lock',
             'link' => route('admin::acl-roles.index.get'),
             'css_class' => null,
+            'permissions' => ['view-roles'],
         ])->registerItem([
             'id' => 'webed-acl-permissions',
             'piority' => 3.2,
@@ -51,6 +52,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
             'font_icon' => 'icon-shield',
             'link' => route('admin::acl-permissions.index.get'),
             'css_class' => null,
+            'permissions' => ['view-permissions'],
         ]);
     }
 }
