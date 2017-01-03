@@ -35,7 +35,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
          */
         \DashboardMenu::registerItem([
             'id' => 'webed-acl-roles',
-            'piority' => 3.1,
+            'priority' => 3.1,
             'parent_id' => null,
             'heading' => null,
             'title' => 'Roles',
@@ -45,7 +45,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
             'permissions' => ['view-roles'],
         ])->registerItem([
             'id' => 'webed-acl-permissions',
-            'piority' => 3.2,
+            'priority' => 3.2,
             'parent_id' => null,
             'heading' => null,
             'title' => 'Permissions',
