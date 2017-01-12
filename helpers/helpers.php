@@ -1,6 +1,16 @@
 <?php
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 
+if (!function_exists('check_user_acl')) {
+    /**
+     * @return \WebEd\Base\ACL\Support\CheckUserACL
+     */
+    function check_user_acl()
+    {
+        return \WebEd\Base\ACL\Facades\CheckUserACLFacade::getFacadeRoot();
+    }
+}
+
 if (!function_exists('acl_permission')) {
     /**
      * Get the PermissionRepository instance.
@@ -19,7 +29,7 @@ if (!function_exists('has_permissions')) {
      * @param array $permissions
      * @return bool
      */
-    function has_permissions($user, $permissions = [])
+    function has_permissions($user, array $permissions = [])
     {
         if (!$user) {
             return false;

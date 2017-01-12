@@ -16,8 +16,16 @@ trait UserAuthorizable
      */
     public function isSuperAdmin()
     {
-        $role = $this->roles()->where('slug', '=', 'super-admin')->count();
-        return $role ? true : false;
+        if (check_user_acl()->hasRoles($this->id, ['super-admin'])) {
+            return true;
+        }
+
+        $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
+        check_user_acl()->pushRoles($this->id, $relatedRoles);
+        if (check_user_acl()->hasRoles($this->id, ['super-admin'])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -38,8 +46,16 @@ trait UserAuthorizable
             return true;
         }
 
-        $relatedRoles = $this->roles()->whereIn('slug', $roles)->count();
-        if ($relatedRoles > 0) {
+        $roles = array_values($roles);
+
+        if (check_user_acl()->hasRoles($this->id, $roles)) {
+            return true;
+        }
+
+        $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
+        check_user_acl()->pushRoles($this->id, $relatedRoles);
+
+        if (check_user_acl()->hasRoles($this->id, $roles)) {
             return true;
         }
         return false;
@@ -63,18 +79,23 @@ trait UserAuthorizable
             return true;
         }
 
-        $count = static::join('users_roles', 'users_roles.user_id', '=', $this->getTable() . '.id')
+        $permissions = array_values($permissions);
+
+        if (check_user_acl()->hasPermissions($this->id, $permissions)) {
+            return true;
+        }
+
+        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', $this->getTable() . '.id')
             ->join('roles', 'users_roles.role_id', '=', 'roles.id')
             ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
             ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
             ->where('users.id', '=', $this->id)
-            ->whereIn('permissions.slug', array_values($permissions))
             ->distinct()
-            ->groupBy('permissions.id')
-            ->select('permissions.id')
-            ->get()->count();
+            ->select('permissions.slug')
+            ->get()->pluck('slug')->toArray();
+        check_user_acl()->pushPermissions($this->id, $relatedPermissions);
 
-        if ($count) {
+        if (check_user_acl()->hasPermissions($this->id, $permissions)) {
             return true;
         }
 
