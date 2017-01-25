@@ -1,5 +1,6 @@
 <?php namespace WebEd\Base\ACL\Providers;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use WebEd\Base\ACL\Http\Middleware\HasPermission;
 use WebEd\Base\ACL\Http\Middleware\HasRole;
@@ -13,8 +14,13 @@ class MiddlewareServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app['router']->middleware('has-role', HasRole::class);
-        $this->app['router']->middleware('has-permission', HasPermission::class);
+        /**
+         * @var  Router $router
+         */
+        $router = $this->app['router'];
+
+        $router->aliasMiddleware('has-role', HasRole::class);
+        $router->aliasMiddleware('has-permission', HasPermission::class);
     }
 
     /**
