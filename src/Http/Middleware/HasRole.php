@@ -20,7 +20,7 @@ class HasRole
     public function handle($request, Closure $next, ...$roles)
     {
         if (!$request->user() || !$request->user()->hasRole($roles)) {
-            return redirect()->to(route('admin::error', ['code' => 403]));
+            abort(\Constants::FORBIDDEN_CODE);
         }
 
         return $next($request);

@@ -35,7 +35,7 @@ Route::group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $r
 
         $router->get('edit/{id}', 'RoleController@getEdit')
             ->name('admin::acl-roles.edit.get')
-            ->middleware('has-permission:edit-roles');
+            ->middleware('has-permission:view-roles');
 
         $router->post('edit/{id}', 'RoleController@postEdit')
             ->name('admin::acl-roles.edit.post')

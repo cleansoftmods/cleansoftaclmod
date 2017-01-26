@@ -65,7 +65,7 @@ class RoleController extends BaseAdminController
         $data = [];
         if ($this->request->get('customActionType', null) == 'group_action') {
 
-            if(!$this->userRepository->hasPermission($this->loggedInUser, 'delete-roles')) {
+            if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
                 return [
                     'customActionMessage' => 'You do not have permission',
                     'customActionStatus' => 'danger',
