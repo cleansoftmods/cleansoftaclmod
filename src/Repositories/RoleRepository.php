@@ -118,6 +118,6 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
             return [];
         }
 
-        return $item->permissions()->getRelatedIds()->toArray();
+        return $item->permissions()->allRelatedIds()->toArray();
     }
 }
