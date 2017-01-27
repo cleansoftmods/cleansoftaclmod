@@ -85,14 +85,16 @@ trait UserAuthorizable
             return true;
         }
 
-        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', $this->getTable() . '.id')
+        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', 'users.id')
             ->join('roles', 'users_roles.role_id', '=', 'roles.id')
             ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
             ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
             ->where('users.id', '=', $this->id)
             ->distinct()
+            ->groupBy('permissions.id')
             ->select('permissions.slug')
             ->get()->pluck('slug')->toArray();
+
         check_user_acl()->pushPermissions($this->id, $relatedPermissions);
 
         if (check_user_acl()->hasPermissions($this->id, $permissions)) {
