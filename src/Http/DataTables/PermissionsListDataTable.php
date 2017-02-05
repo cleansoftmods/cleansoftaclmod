@@ -1,17 +1,18 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
-use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
+use WebEd\Base\ACL\Models\Permission;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
 
 class PermissionsListDataTable extends AbstractDataTables
 {
-    protected $repository;
+    /**
+     * @var Permission
+     */
+    protected $model;
 
-    public function __construct(PermissionRepositoryContract $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
-
-        $this->repository->select('name', 'slug', 'module', 'id');
+        $this->model = Permission::select('name', 'slug', 'module', 'id');
 
         parent::__construct();
     }
@@ -59,7 +60,7 @@ class PermissionsListDataTable extends AbstractDataTables
      */
     protected function fetch()
     {
-        $this->fetch = datatable()->of($this->repository);
+        $this->fetch = datatable()->of($this->model);
 
         return $this;
     }

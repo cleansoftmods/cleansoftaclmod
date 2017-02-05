@@ -91,9 +91,11 @@ trait UserAuthorizable
             ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
             ->where('users.id', '=', $this->id)
             ->distinct()
-            ->groupBy('permissions.id')
+            ->groupBy('permissions.id', 'permissions.slug')
             ->select('permissions.slug')
-            ->get()->pluck('slug')->toArray();
+            ->get()
+            ->pluck('slug')
+            ->toArray();
 
         check_user_acl()->pushPermissions($this->id, $relatedPermissions);
 

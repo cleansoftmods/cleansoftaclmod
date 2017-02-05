@@ -1,9 +1,9 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
-use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
+use WebEd\Base\Caching\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
 
-class RoleRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements RoleRepositoryContract
+class RoleRepositoryCacheDecorator extends EloquentBaseRepositoryCacheDecorator implements RoleRepositoryContract
 {
     /**
      * @param array|int $id

@@ -112,8 +112,6 @@ class RoleController extends BaseAdminController
 
         $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
 
-        $this->dis['currentId'] = 0;
-
         $this->dis['object'] = $this->repository->getModel();
         $oldInputs = old();
         if ($oldInputs) {
@@ -190,8 +188,6 @@ class RoleController extends BaseAdminController
         }
 
         $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
-
-        $this->dis['currentId'] = $id;
 
         return do_filter('acl-roles.edit.get', $this, $id)->viewAdmin('roles.edit');
     }

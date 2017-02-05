@@ -1,12 +1,15 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
-use WebEd\Base\Core\Repositories\AbstractBaseRepository;
+use WebEd\Base\Caching\Services\Traits\Cacheable;
+use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
 
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class PermissionRepository extends AbstractBaseRepository implements PermissionRepositoryContract, CacheableContract
+class PermissionRepository extends EloquentBaseRepository implements PermissionRepositoryContract, CacheableContract
 {
+    use Cacheable;
+
     protected $rules = [
         'name' => 'required|between:3,100|string',
         'slug' => 'required|between:3,100|unique:roles|alpha_dash',
@@ -32,15 +35,15 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionR
             ], true, false);
             if (!$result['error']) {
                 if (!$force) {
-                    return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
+                    return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
                 }
             }
             if (!$force) {
-                return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+                return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages('Permission alias exists', true, \Constants::ERROR_CODE);
+            return response_with_messages('Permission alias exists', true, \Constants::ERROR_CODE);
         }
         return $this;
     }
@@ -55,11 +58,11 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionR
         $result = $this->where('slug', 'IN', (array)$alias)->delete();
         if (!$result['error']) {
             if (!$force) {
-                return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
+                return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
         }
         return $this;
     }
@@ -74,11 +77,11 @@ class PermissionRepository extends AbstractBaseRepository implements PermissionR
         $result = $this->where('module', 'IN', (array)$module)->delete();
         if (!$result['error']) {
             if (!$force) {
-                return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
+                return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
             }
         }
         if (!$force) {
-            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
         }
         return $this;
     }

@@ -1,21 +1,18 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
-use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
-use WebEd\Base\ACL\Repositories\RoleRepository;
+use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
 
 class RolesListDataTable extends AbstractDataTables
 {
     /**
-     * @var RoleRepository
+     * @var Role
      */
-    protected $repository;
+    protected $model;
 
-    public function __construct(RoleRepositoryContract $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
-
-        $this->repository->select('id', 'name', 'slug');
+        $this->model = Role::select('id', 'name', 'slug');
 
         parent::__construct();
     }
@@ -68,7 +65,7 @@ class RolesListDataTable extends AbstractDataTables
      */
     protected function fetch()
     {
-        $this->fetch = datatable()->of($this->repository)
+        $this->fetch = datatable()->of($this->model)
             ->editColumn('id', function ($item) {
                 return form()->customCheckbox([
                     ['id[]', $item->id]

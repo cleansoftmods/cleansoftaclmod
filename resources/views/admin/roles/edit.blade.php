@@ -9,41 +9,7 @@
 @endsection
 
 @section('js-init')
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.js-validate-form').validate({
-                errorElement: 'span', //default input error message container
-                errorClass: 'help-block help-block-error', // default input error message class
-                focusInvalid: false, // do not focus the last invalid input
-                ignore: "",  // validate all fields including form hidden input
-                messages: {},
-                rules: {
-                    name: {
-                        minlength: 3,
-                        maxlength: 100,
-                        required: true
-                    },
-                    slug: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 100
-                    }
-                },
 
-                highlight: function (element) {
-                    $(element).closest('.form-group').addClass('has-error'); // set error class to the control group
-                },
-
-                unhighlight: function (element) {
-                    $(element).closest('.form-group').removeClass('has-error'); // set error class to the control group
-                },
-
-                success: function (label) {
-                    label.closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
-                }
-            });
-        });
-    </script>
 @endsection
 
 @section('content')
@@ -56,7 +22,7 @@
                     </h3>
                 </div>
                 <div class="box-body">
-                    {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::acl-roles.edit.post', ['id' => $currentId])]) !!}
+                    {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::acl-roles.edit.post', ['id' => $object->id])]) !!}
                     <div class="form-group">
                         <label class="control-label">Name<span class="required"> * </span></label>
                         <input type="text"
@@ -67,9 +33,9 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Alias<span class="required"> * </span></label>
-                        <input type="text" name="slug"
+                        <input type="text"
                                value="{{ $object->slug or '' }}"
-                               {{ $currentId ? 'disabled' : '' }}
+                               disabled
                                class="form-control"
                                autocomplete="off">
                     </div>

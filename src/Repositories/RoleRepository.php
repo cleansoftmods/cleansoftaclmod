@@ -1,13 +1,16 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
 use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
-use WebEd\Base\Core\Repositories\AbstractBaseRepository;
+use WebEd\Base\Caching\Services\Traits\Cacheable;
+use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class RoleRepository extends AbstractBaseRepository implements RoleRepositoryContract, CacheableContract
+class RoleRepository extends EloquentBaseRepository implements RoleRepositoryContract, CacheableContract
 {
+    use Cacheable;
+
     protected $rules = [
         'name' => 'required|between:3,100|string',
         'slug' => 'required|between:3,100|unique:roles|alpha_dash',
@@ -48,9 +51,9 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
             ->delete();
 
         if (!$result['error']) {
-            return $this->setMessages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
+            return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
         }
-        return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+        return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
     }
 
     /**
@@ -62,7 +65,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
         $result = $this->editWithValidate(0, $data, true, false);
 
         if ($result['error']) {
-            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
         }
 
         /**
@@ -72,7 +75,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
             $this->syncPermissions($result['data'], $data['permissions']);
         }
 
-        $result = $this->setMessages('Create role success', false, \Constants::SUCCESS_CODE, $result['data']);
+        $result = response_with_messages('Create role success', false, \Constants::SUCCESS_CODE, $result['data']);
 
         return $result;
     }
@@ -87,7 +90,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
         $result = $this->editWithValidate($id, $data, false, true);
 
         if ($result['error']) {
-            return $this->setMessages($result['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
         }
 
         /**
@@ -97,7 +100,7 @@ class RoleRepository extends AbstractBaseRepository implements RoleRepositoryCon
             $this->syncPermissions($result['data'], $data['permissions']);
         }
 
-        $result = $this->setMessages('Update role success', false, \Constants::SUCCESS_CODE, $result['data']);
+        $result = response_with_messages('Update role success', false, \Constants::SUCCESS_CODE, $result['data']);
 
         return $result;
     }
