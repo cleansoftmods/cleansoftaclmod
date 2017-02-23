@@ -16,6 +16,12 @@ class PermissionRepository extends EloquentBaseRepository implements PermissionR
         'module' => 'required|max:255',
     ];
 
+    protected $editableFields = [
+        'name',
+        'slug',
+        'module',
+    ];
+
     /**
      * Register permission
      * @param $name
