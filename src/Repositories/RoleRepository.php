@@ -2,7 +2,7 @@
 
 use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
 use WebEd\Base\Caching\Services\Traits\Cacheable;
-use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
+use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;

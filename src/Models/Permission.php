@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\ACL\Models;
 
 use WebEd\Base\ACL\Models\Contracts\PermissionModelContract;
-use WebEd\Base\Core\Models\EloquentBase as BaseModel;
+use WebEd\Base\Models\EloquentBase as BaseModel;
 
 class Permission extends BaseModel implements PermissionModelContract
 {

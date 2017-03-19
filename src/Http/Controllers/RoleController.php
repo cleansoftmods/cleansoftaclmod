@@ -3,10 +3,10 @@
 use WebEd\Base\ACL\Http\DataTables\RolesListDataTable;
 use WebEd\Base\ACL\Http\Requests\CreateRoleRequest;
 use WebEd\Base\ACL\Http\Requests\UpdateRoleRequest;
-use WebEd\Base\Core\Http\Controllers\BaseAdminController;
+use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
-use WebEd\Base\Core\Support\DataTable\DataTables;
+use WebEd\Base\Support\DataTable\DataTables;
 use Yajra\Datatables\Engines\BaseEngine;
 
 class RoleController extends BaseAdminController
@@ -67,7 +67,7 @@ class RoleController extends BaseAdminController
 
             if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
                 return [
-                    'customActionMessage' => 'You do not have permission',
+                    'customActionMessage' => trans('webed-acl::base.do_not_have_permission'),
                     'customActionStatus' => 'danger',
                 ];
             }
@@ -140,7 +140,7 @@ class RoleController extends BaseAdminController
 
         $msgType = $result['error'] ? 'danger' : 'success';
 
-        $this->flashMessagesHelper
+        flash_messages()
             ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 
@@ -169,7 +169,7 @@ class RoleController extends BaseAdminController
         $item = $this->repository->find($id);
 
         if (!$item) {
-            $this->flashMessagesHelper
+            flash_messages()
                 ->addMessages('Role not exists', 'danger')
                 ->showMessagesOnSession();
 
@@ -197,7 +197,7 @@ class RoleController extends BaseAdminController
         $item = $this->repository->find($id);
 
         if (!$item) {
-            $this->flashMessagesHelper
+            flash_messages()
                 ->addMessages('Role not exists', 'danger')
                 ->showMessagesOnSession();
 
@@ -214,7 +214,7 @@ class RoleController extends BaseAdminController
 
         $msgType = $result['error'] ? 'danger' : 'success';
 
-        $this->flashMessagesHelper
+        flash_messages()
             ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 

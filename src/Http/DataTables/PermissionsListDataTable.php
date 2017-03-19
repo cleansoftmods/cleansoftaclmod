@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
 use WebEd\Base\ACL\Models\Permission;
-use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
+use WebEd\Base\Http\DataTables\AbstractDataTables;
 
 class PermissionsListDataTable extends AbstractDataTables
 {

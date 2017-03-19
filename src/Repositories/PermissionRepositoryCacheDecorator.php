@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
-use WebEd\Base\Caching\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
+use WebEd\Base\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
 
 class PermissionRepositoryCacheDecorator extends EloquentBaseRepositoryCacheDecorator implements PermissionRepositoryContract
 {

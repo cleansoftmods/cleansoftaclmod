@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
 use WebEd\Base\ACL\Http\DataTables\PermissionsListDataTable;
-use WebEd\Base\Core\Http\Controllers\BaseAdminController;
+use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
 
 class PermissionController extends BaseAdminController

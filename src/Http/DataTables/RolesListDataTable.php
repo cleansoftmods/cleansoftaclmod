@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
 use WebEd\Base\ACL\Models\Role;
-use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
+use WebEd\Base\Http\DataTables\AbstractDataTables;
 
 class RolesListDataTable extends AbstractDataTables
 {
@@ -66,6 +66,7 @@ class RolesListDataTable extends AbstractDataTables
     protected function fetch()
     {
         $this->fetch = datatable()->of($this->model)
+            ->rawColumns(['actions'])
             ->editColumn('id', function ($item) {
                 return form()->customCheckbox([
                     ['id[]', $item->id]
