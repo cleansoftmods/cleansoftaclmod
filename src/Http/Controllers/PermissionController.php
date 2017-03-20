@@ -21,20 +21,22 @@ class PermissionController extends BaseAdminController
 
         $this->getDashboardMenu($this->module . '-permissions');
 
-        $this->breadcrumbs->addLink('ACL')->addLink('Permissions', route('admin::acl-permissions.index.get'));;
+        $this->breadcrumbs
+            ->addLink(trans('webed-acl::base.acl'))
+            ->addLink(trans('webed-acl::base.permissions'), route('admin::acl-permissions.index.get'));;
     }
 
     public function getIndex(PermissionsListDataTable $permissionsListDataTable)
     {
-        $this->setPageTitle('Permissions', 'All available permissions');
+        $this->setPageTitle(trans('webed-acl::base.permissions'));
 
         $this->dis['dataTable'] = $permissionsListDataTable->run();
 
-        return do_filter('acl-permissions.index.get', $this)->viewAdmin('permissions.index');
+        return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_PERMISSION, 'index.get')->viewAdmin('permissions.index');
     }
 
     public function postListing(PermissionsListDataTable $permissionsListDataTable)
     {
-        return do_filter('datatables.acl-permissions.index.post', $permissionsListDataTable, $this);
+        return do_filter(BASE_FILTER_CONTROLLER, $permissionsListDataTable, WEBED_ACL_PERMISSION, 'index.post', $this);
     }
 }

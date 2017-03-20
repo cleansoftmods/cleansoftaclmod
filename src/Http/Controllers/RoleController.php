@@ -27,8 +27,8 @@ class RoleController extends BaseAdminController
         $this->getDashboardMenu($this->module . '-roles');
 
         $this->breadcrumbs
-            ->addLink('ACL')
-            ->addLink('Roles', route('admin::acl-roles.index.get'));
+            ->addLink(trans('webed-acl::base.acl'))
+            ->addLink(trans('webed-acl::base.roles'), route('admin::acl-roles.index.get'));
     }
 
     /**
@@ -37,11 +37,11 @@ class RoleController extends BaseAdminController
      */
     public function getIndex(RolesListDataTable $rolesListDataTable)
     {
-        $this->setPageTitle('Roles', 'All available roles');
+        $this->setPageTitle(trans('webed-acl::base.roles'));
 
         $this->dis['dataTable'] = $rolesListDataTable->run();
 
-        return do_filter('acl-roles.index.get', $this, $rolesListDataTable)->viewAdmin('roles.index');
+        return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'index.get', $rolesListDataTable)->viewAdmin('roles.index');
     }
 
     /**
@@ -53,18 +53,17 @@ class RoleController extends BaseAdminController
     {
         $data = $rolesListDataTable->with($this->groupAction());
 
-        return do_filter('datatables.acl-roles.index.post', $data, $this, $rolesListDataTable);
+        return do_filter(BASE_FILTER_CONTROLLER, $data, WEBED_ACL_ROLE, 'index.post', $this);
     }
 
     /**
      * Handle group actions
      * @return array
      */
-    private function groupAction()
+    protected function groupAction()
     {
         $data = [];
         if ($this->request->get('customActionType', null) == 'group_action') {
-
             if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
                 return [
                     'customActionMessage' => trans('webed-acl::base.do_not_have_permission'),
@@ -78,7 +77,6 @@ class RoleController extends BaseAdminController
 
             $data['customActionMessage'] = $result['messages'];
             $data['customActionStatus'] = $result['error'] ? 'danger' : 'success';
-
         }
         return $data;
     }
@@ -90,9 +88,11 @@ class RoleController extends BaseAdminController
      */
     public function deleteDelete($id)
     {
+        $id = do_filter(BASE_FILTER_BEFORE_DELETE, $id, WEBED_ACL_ROLE);
+
         $result = $this->repository->deleteRole($id);
 
-        do_action('acl-roles.after-delete.delete', $id, $result);
+        do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $id, $result);
 
         return response()->json($result, $result['response_code']);
     }
@@ -103,14 +103,16 @@ class RoleController extends BaseAdminController
      */
     public function getCreate(PermissionRepositoryContract $permissionRepository)
     {
+        do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.get');
+
         $this->dis['superAdminRole'] = false;
 
-        $this->setPageTitle('Create role');
-        $this->breadcrumbs->addLink('Create role');
+        $this->setPageTitle(trans('webed-acl::base.create_role'));
+        $this->breadcrumbs->addLink(trans('webed-acl::base.create_role'));
 
         $this->dis['checkedPermissions'] = [];
 
-        $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
+        $this->dis['permissions'] = $permissionRepository->get();
 
         $this->dis['object'] = $this->repository->getModel();
         $oldInputs = old();
@@ -120,15 +122,16 @@ class RoleController extends BaseAdminController
                     $this->dis['checkedPermissions'] = $row;
                     continue;
                 }
-                $this->dis['object']->$key = $row;
             }
         }
 
-        return do_filter('acl-roles.create.get', $this)->viewAdmin('roles.create');
+        return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'create.get')->viewAdmin('roles.create');
     }
 
     public function postCreate(CreateRoleRequest $request)
     {
+        do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.post');
+
         $data = [
             'name' => $request->get('name'),
             'slug' => $request->get('slug'),
@@ -137,6 +140,8 @@ class RoleController extends BaseAdminController
             'updated_by' => $this->loggedInUser->id,
         ];
         $result = $this->repository->createRole($data);
+
+        do_action(BASE_ACTION_AFTER_CREATE, WEBED_ACL_ROLE, $result);
 
         $msgType = $result['error'] ? 'danger' : 'success';
 
@@ -147,8 +152,6 @@ class RoleController extends BaseAdminController
         if ($result['error']) {
             return redirect()->back()->withInput();
         }
-
-        do_action('acl-roles.after-create.post', $result['data']->id, $result, $this);
 
         if ($this->request->has('_continue_edit')) {
             return redirect()->to(route('admin::acl-roles.edit.get', ['id' => $result['data']->id]));
@@ -170,14 +173,14 @@ class RoleController extends BaseAdminController
 
         if (!$item) {
             flash_messages()
-                ->addMessages('Role not exists', 'danger')
+                ->addMessages(trans('webed-acl::base.role_not_exists'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->to(route('admin::acl-roles.index.get'));
         }
 
-        $this->setPageTitle('Edit role', '#' . $id . ' ' . $item->name);
-        $this->breadcrumbs->addLink('Edit role');
+        $this->setPageTitle(trans('webed-acl::base.edit_role'), '#' . $id . ' ' . $item->name);
+        $this->breadcrumbs->addLink(trans('webed-acl::base.edit_role'));
 
         $this->dis['object'] = $item;
 
@@ -187,18 +190,20 @@ class RoleController extends BaseAdminController
             $this->dis['superAdminRole'] = true;
         }
 
-        $this->dis['permissions'] = $permissionRepository->orderBy('module', 'ASC')->get();
+        $this->dis['permissions'] = $permissionRepository->get();
 
-        return do_filter('acl-roles.edit.get', $this, $id)->viewAdmin('roles.edit');
+        return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'edit.get', $id)->viewAdmin('roles.edit');
     }
 
     public function postEdit(UpdateRoleRequest $request, $id)
     {
         $item = $this->repository->find($id);
 
+        $item = do_filter(BASE_FILTER_BEFORE_UPDATE, $item, WEBED_ACL_ROLE, 'edit.post');
+
         if (!$item) {
             flash_messages()
-                ->addMessages('Role not exists', 'danger')
+                ->addMessages(trans('webed-acl::base.role_not_exists'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->to(route('admin::acl-roles.index.get'));
@@ -212,6 +217,8 @@ class RoleController extends BaseAdminController
 
         $result = $this->repository->updateRole($item, $data);
 
+        do_action(BASE_ACTION_AFTER_UPDATE, WEBED_ACL_ROLE, $id, $result);
+
         $msgType = $result['error'] ? 'danger' : 'success';
 
         flash_messages()
@@ -221,8 +228,6 @@ class RoleController extends BaseAdminController
         if ($result['error']) {
             return redirect()->back();
         }
-
-        do_action('acl-roles.after-edit.post', $id, $result, $this);
 
         if ($this->request->has('_continue_edit')) {
             return redirect()->back();

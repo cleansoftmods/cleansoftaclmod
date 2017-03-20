@@ -4,7 +4,10 @@ use WebEd\Base\Http\Requests\Request;
 
 class UpdateRoleRequest extends Request
 {
-    public $rules = [
-        'name' => 'required|max:255|string',
-    ];
+    public function rules()
+    {
+        return [
+            'name' => 'required|max:255|string',
+        ];
+    }
 }

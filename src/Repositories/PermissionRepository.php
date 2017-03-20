@@ -22,6 +22,12 @@ class PermissionRepository extends EloquentBaseRepository implements PermissionR
         'module',
     ];
 
+    public function get(array $columns = ['*'])
+    {
+        $this->model = $this->model->orderBy('module', 'ASC');
+        return parent::get($columns);
+    }
+
     /**
      * Register permission
      * @param $name

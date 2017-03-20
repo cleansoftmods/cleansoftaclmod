@@ -46,8 +46,9 @@ class RoleRepository extends EloquentBaseRepository implements RoleRepositoryCon
      */
     public function deleteRole($id)
     {
-        $result = $this->where('slug', 'NOT_IN', $this->cannotDelete)
-            ->where('id', 'IN', (array)$id)
+        $result = $this->model
+            ->whereNotIn('slug', $this->cannotDelete)
+            ->whereIn('id', (array)$id)
             ->delete();
 
         if (!$result['error']) {

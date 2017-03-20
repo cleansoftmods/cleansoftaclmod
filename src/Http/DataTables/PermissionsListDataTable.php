@@ -12,9 +12,45 @@ class PermissionsListDataTable extends AbstractDataTables
 
     public function __construct()
     {
-        $this->model = Permission::select('name', 'slug', 'module', 'id');
+        $this->model = Permission::select(['name', 'slug', 'module', 'id']);
+    }
 
-        parent::__construct();
+    /**
+     * @return array
+     */
+    public function headings()
+    {
+        return [
+            'id' => [
+                'title' => 'ID',
+                'width' => '1%',
+            ],
+            'name' => [
+                'title' => trans('webed-acl::datatables.permission.heading.name'),
+                'width' => '40%',
+            ],
+            'slug' => [
+                'title' => trans('webed-acl::datatables.permission.heading.slug'),
+                'width' => '30%',
+            ],
+            'module' => [
+                'title' => trans('webed-acl::datatables.permission.heading.module'),
+                'width' => '30%',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function columns()
+    {
+        return [
+            ['data' => 'id', 'name' => 'id'],
+            ['data' => 'name', 'name' => 'name'],
+            ['data' => 'slug', 'name' => 'slug'],
+            ['data' => 'module', 'name' => 'module'],
+        ];
     }
 
     /**
@@ -25,32 +61,18 @@ class PermissionsListDataTable extends AbstractDataTables
         $this->setAjaxUrl(route('admin::acl-permissions.index.post'), 'POST');
 
         $this
-            ->addHeading('id', 'ID', '1%')
-            ->addHeading('name', 'Name', '35%')
-            ->addHeading('alias', 'Alias', '30%')
-            ->addHeading('module', 'Module', '35%')
-        ;
-
-        $this
             ->addFilter(1, form()->text('name', '', [
                 'class' => 'form-control form-filter input-sm',
-                'placeholder' => 'Search...'
+                'placeholder' => trans('webed-core::datatables.search') . '...',
             ]))
             ->addFilter(2, form()->text('module', '', [
                 'class' => 'form-control form-filter input-sm',
-                'placeholder' => 'Search...'
+                'placeholder' => trans('webed-core::datatables.search') . '...',
             ]))
             ->addFilter(3, form()->text('slug', '', [
                 'class' => 'form-control form-filter input-sm',
-                'placeholder' => 'Search...'
+                'placeholder' => trans('webed-core::datatables.search') . '...',
             ]));
-
-        $this->setColumns([
-            ['data' => 'id', 'name' => 'id'],
-            ['data' => 'name', 'name' => 'name'],
-            ['data' => 'slug', 'name' => 'slug'],
-            ['data' => 'module', 'name' => 'module'],
-        ]);
 
         return $this->view();
     }
@@ -58,10 +80,8 @@ class PermissionsListDataTable extends AbstractDataTables
     /**
      * @return $this
      */
-    protected function fetch()
+    public function fetchDataForAjax()
     {
-        $this->fetch = datatable()->of($this->model);
-
-        return $this;
+        return datatable()->of($this->model);
     }
 }

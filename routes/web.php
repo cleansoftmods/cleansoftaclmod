@@ -22,7 +22,7 @@ Route::group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $r
             ->middleware('has-permission:view-roles');
 
         $router->post('', 'RoleController@postListing')
-            ->name('admin::acl-roles.index.get-json')
+            ->name('admin::acl-roles.index.post')
             ->middleware('has-permission:view-roles');
 
         $router->get('create', 'RoleController@getCreate')

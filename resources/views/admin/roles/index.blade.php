@@ -18,12 +18,14 @@
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        <i class="icon-layers font-dark"></i> All roles
+                        <i class="icon-layers font-dark"></i>
+                        {{ trans('webed-acl::base.all_roles') }}
                     </h3>
                     <div class="box-tools">
                         <a class="btn btn-transparent green btn-sm"
                            href="{{ route('admin::acl-roles.create.get') }}">
-                            <i class="fa fa-plus"></i> Create
+                            <i class="fa fa-plus"></i>
+                            {{ trans('webed-core::base.form.create') }}
                         </a>
                     </div>
                 </div>

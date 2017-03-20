@@ -17,7 +17,7 @@
         <div class="box-header with-border">
             <h3 class="box-title">
                 <i class="icon-layers font-dark"></i>
-                All permissions
+                {{ trans('webed-acl::base.all_permissions') }}
             </h3>
         </div>
         <div class="box-body">
