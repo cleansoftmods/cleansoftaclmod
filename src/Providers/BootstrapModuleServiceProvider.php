@@ -4,8 +4,6 @@ use Illuminate\Support\ServiceProvider;
 
 class BootstrapModuleServiceProvider extends ServiceProvider
 {
-    protected $module = 'WebEd\Base\ACL';
-
     /**
      * Bootstrap the application services.
      *
@@ -28,7 +26,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
 
     }
 
-    private function booted()
+    protected function booted()
     {
         /**
          * Register to dashboard menu
@@ -38,7 +36,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
             'priority' => 3.1,
             'parent_id' => null,
             'heading' => null,
-            'title' => 'Roles',
+            'title' => trans('webed-acl::base.roles'),
             'font_icon' => 'icon-lock',
             'link' => route('admin::acl-roles.index.get'),
             'css_class' => null,
@@ -48,7 +46,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
             'priority' => 3.2,
             'parent_id' => null,
             'heading' => null,
-            'title' => 'Permissions',
+            'title' => trans('webed-acl::base.permissions'),
             'font_icon' => 'icon-shield',
             'link' => route('admin::acl-permissions.index.get'),
             'css_class' => null,

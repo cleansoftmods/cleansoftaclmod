@@ -2,6 +2,9 @@
 
 use WebEd\Base\ACL\Models\Permission;
 use WebEd\Base\Http\DataTables\AbstractDataTables;
+use Yajra\Datatables\Engines\CollectionEngine;
+use Yajra\Datatables\Engines\EloquentEngine;
+use Yajra\Datatables\Engines\QueryBuilderEngine;
 
 class PermissionsListDataTable extends AbstractDataTables
 {
@@ -65,11 +68,11 @@ class PermissionsListDataTable extends AbstractDataTables
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => trans('webed-core::datatables.search') . '...',
             ]))
-            ->addFilter(2, form()->text('module', '', [
+            ->addFilter(2, form()->text('slug', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => trans('webed-core::datatables.search') . '...',
             ]))
-            ->addFilter(3, form()->text('slug', '', [
+            ->addFilter(3, form()->text('module', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => trans('webed-core::datatables.search') . '...',
             ]));
@@ -78,10 +81,16 @@ class PermissionsListDataTable extends AbstractDataTables
     }
 
     /**
-     * @return $this
+     * @return CollectionEngine|EloquentEngine|QueryBuilderEngine|mixed
      */
     public function fetchDataForAjax()
     {
-        return datatable()->of($this->model);
+        return datatable()->of($this->model)
+            ->editColumn('name', function ($item) {
+                if (lang()->has($item->module . '::permissions.' . $item->slug)) {
+                    return trans($item->module . '::permissions.' . $item->slug);
+                }
+                return $item->name;
+            });
     }
 }

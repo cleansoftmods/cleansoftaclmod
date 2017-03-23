@@ -2,6 +2,9 @@
 
 use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\Http\DataTables\AbstractDataTables;
+use Yajra\Datatables\Engines\CollectionEngine;
+use Yajra\Datatables\Engines\EloquentEngine;
+use Yajra\Datatables\Engines\QueryBuilderEngine;
 
 class RolesListDataTable extends AbstractDataTables
 {
@@ -84,7 +87,7 @@ class RolesListDataTable extends AbstractDataTables
     }
 
     /**
-     * @return $this
+     * @return CollectionEngine|EloquentEngine|QueryBuilderEngine|mixed
      */
     protected function fetchDataForAjax()
     {
@@ -104,7 +107,7 @@ class RolesListDataTable extends AbstractDataTables
                 $editLink = route('admin::acl-roles.edit.get', ['id' => $item->id]);
 
                 /*Buttons*/
-                $editBtn = link_to($editLink, 'Edit', ['class' => 'btn btn-outline green btn-sm']);
+                $editBtn = link_to($editLink, trans('webed-core::datatables.edit'), ['class' => 'btn btn-outline green btn-sm']);
                 $deleteBtn = ($item->status != 'deleted') ? form()->button(trans('webed-core::datatables.delete'), [
                     'title' => trans('webed-core::datatables.delete_this_item'),
                     'data-ajax' => $deleteLink,

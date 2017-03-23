@@ -4,7 +4,7 @@ use Illuminate\Support\ServiceProvider;
 
 class InstallModuleServiceProvider extends ServiceProvider
 {
-    protected $module = 'WebEd\Base\ACL';
+    protected $module = 'webed-acl';
 
     /**
      * Bootstrap the application services.
