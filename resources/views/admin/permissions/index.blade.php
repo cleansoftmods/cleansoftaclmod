@@ -24,5 +24,5 @@
             {!! $dataTable or '' !!}
         </div>
     </div>
-    @php do_action('meta_boxes', 'main', 'acl-permissions.index') @endphp
+    @php do_action(BASE_ACTION_META_BOXES, 'main', 'webed-acl.permissions.index', null) @endphp
 @endsection
