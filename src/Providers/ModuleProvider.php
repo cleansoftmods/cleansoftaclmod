@@ -1,6 +1,8 @@
 <?php namespace WebEd\Base\ACL\Providers;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use WebEd\Base\ACL\Http\Middleware\BootstrapModuleMiddleware;
 
 class ModuleProvider extends ServiceProvider
 {
@@ -24,6 +26,10 @@ class ModuleProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/lang' => base_path('resources/lang/vendor/webed-acl'),
         ], 'lang');
+
+        app()->booted(function () {
+            $this->app->register(BootstrapModuleServiceProvider::class);
+        });
     }
 
     /**
@@ -38,7 +44,12 @@ class ModuleProvider extends ServiceProvider
 
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);
-        $this->app->register(BootstrapModuleServiceProvider::class);
         $this->app->register(MiddlewareServiceProvider::class);
+
+        /**
+         * @var Router $router
+         */
+        $router = $this->app['router'];
+        $router->pushMiddlewareToGroup('web', BootstrapModuleMiddleware::class);
     }
 }

@@ -8,11 +8,11 @@ use WebEd\Base\ACL\Http\Middleware\HasRole;
 class MiddlewareServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Register any application services.
      *
      * @return void
      */
-    public function boot()
+    public function register()
     {
         /**
          * @var  Router $router
@@ -21,15 +21,5 @@ class MiddlewareServiceProvider extends ServiceProvider
 
         $router->aliasMiddleware('has-role', HasRole::class);
         $router->aliasMiddleware('has-permission', HasPermission::class);
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
     }
 }
