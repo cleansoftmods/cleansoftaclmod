@@ -10,7 +10,7 @@ class Role extends BaseModel implements RoleModelContract
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'created_by', 'updated_by'];
 
     public $timestamps = true;
 
@@ -30,6 +30,10 @@ class Role extends BaseModel implements RoleModelContract
         return $this->belongsToMany(User::class, 'users_roles', 'role_id', 'user_id');
     }
 
+    /**
+     * Setter
+     * @param $value
+     */
     public function setSlugAttribute($value)
     {
         $this->attributes['slug'] = str_slug($value);

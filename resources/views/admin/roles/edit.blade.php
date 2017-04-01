@@ -52,7 +52,11 @@
                                                        name="permissions[]"
                                                        {{ in_array($row->id, $checkedPermissions) || $superAdminRole ? 'checked' : '' }}
                                                        value="{{ $row->id or '' }}">
-                                                {{ $row->name or '' }}
+                                                @if (lang()->has($row->module . '::permissions.' . $row->slug))
+                                                    {{ trans($row->module . '::permissions.' . $row->slug) }}
+                                                @else
+                                                    {{ $row->name }}
+                                                @endif
                                                 <small><b>&nbsp;({{ $row->module or '' }})</b></small>
                                                 <span></span>
                                             </label>

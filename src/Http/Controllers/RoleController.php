@@ -1,12 +1,12 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
+use Illuminate\Http\Request;
 use WebEd\Base\ACL\Http\DataTables\RolesListDataTable;
 use WebEd\Base\ACL\Http\Requests\CreateRoleRequest;
 use WebEd\Base\ACL\Http\Requests\UpdateRoleRequest;
 use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
-use WebEd\Base\Support\DataTable\DataTables;
 use Yajra\Datatables\Engines\BaseEngine;
 
 class RoleController extends BaseAdminController
@@ -24,11 +24,15 @@ class RoleController extends BaseAdminController
 
         $this->repository = $roleRepository;
 
-        $this->getDashboardMenu($this->module . '-roles');
+        $this->middleware(function (Request $request, $next) {
+            $this->getDashboardMenu($this->module . '-roles');
 
-        $this->breadcrumbs
-            ->addLink(trans('webed-acl::base.acl'))
-            ->addLink(trans('webed-acl::base.roles'), route('admin::acl-roles.index.get'));
+            $this->breadcrumbs
+                ->addLink(trans('webed-acl::base.acl'))
+                ->addLink(trans('webed-acl::base.roles'), route('admin::acl-roles.index.get'));
+
+            return $next($request);
+        });
     }
 
     /**
@@ -75,26 +79,12 @@ class RoleController extends BaseAdminController
 
             $result = $this->repository->deleteRole($ids);
 
-            $data['customActionMessage'] = $result['messages'];
-            $data['customActionStatus'] = $result['error'] ? 'danger' : 'success';
+            do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $ids, $result);
+
+            $data['customActionMessage'] = $result ? trans('webed-acl::base.delete_role_success') : trans('webed-acl::base.delete_role_error');
+            $data['customActionStatus'] = $result ? 'success' : 'danger';
         }
         return $data;
-    }
-
-    /**
-     * Delete role
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function deleteDelete($id)
-    {
-        $id = do_filter(BASE_FILTER_BEFORE_DELETE, $id, WEBED_ACL_ROLE);
-
-        $result = $this->repository->deleteRole($id);
-
-        do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $id, $result);
-
-        return response()->json($result, $result['response_code']);
     }
 
     /**
@@ -105,25 +95,10 @@ class RoleController extends BaseAdminController
     {
         do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.get');
 
-        $this->dis['superAdminRole'] = false;
-
         $this->setPageTitle(trans('webed-acl::base.create_role'));
         $this->breadcrumbs->addLink(trans('webed-acl::base.create_role'));
 
-        $this->dis['checkedPermissions'] = [];
-
         $this->dis['permissions'] = $permissionRepository->get();
-
-        $this->dis['object'] = $this->repository->getModel();
-        $oldInputs = old();
-        if ($oldInputs) {
-            foreach ($oldInputs as $key => $row) {
-                if($key === 'permissions') {
-                    $this->dis['checkedPermissions'] = $row;
-                    continue;
-                }
-            }
-        }
 
         return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'create.get')->viewAdmin('roles.create');
     }
@@ -143,18 +118,18 @@ class RoleController extends BaseAdminController
 
         do_action(BASE_ACTION_AFTER_CREATE, WEBED_ACL_ROLE, $result);
 
-        $msgType = $result['error'] ? 'danger' : 'success';
+        $msgType = !$result ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages($result['messages'], $msgType)
+            ->addMessages(trans('webed-acl::base.create_role_' . $msgType), $msgType)
             ->showMessagesOnSession();
 
-        if ($result['error']) {
+        if (!$result) {
             return redirect()->back()->withInput();
         }
 
         if ($this->request->has('_continue_edit')) {
-            return redirect()->to(route('admin::acl-roles.edit.get', ['id' => $result['data']->id]));
+            return redirect()->to(route('admin::acl-roles.edit.get', ['id' => $result]));
         }
 
         return redirect()->to(route('admin::acl-roles.index.get'));
@@ -219,13 +194,13 @@ class RoleController extends BaseAdminController
 
         do_action(BASE_ACTION_AFTER_UPDATE, WEBED_ACL_ROLE, $id, $result);
 
-        $msgType = $result['error'] ? 'danger' : 'success';
+        $msgType = !$result ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages($result['messages'], $msgType)
+            ->addMessages(trans('webed-acl::base.update_role_' . $msgType), $msgType)
             ->showMessagesOnSession();
 
-        if ($result['error']) {
+        if (!$result) {
             return redirect()->back();
         }
 
@@ -234,5 +209,25 @@ class RoleController extends BaseAdminController
         }
 
         return redirect()->to(route('admin::acl-roles.index.get'));
+    }
+
+    /**
+     * Delete role
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteDelete($id)
+    {
+        $id = do_filter(BASE_FILTER_BEFORE_DELETE, $id, WEBED_ACL_ROLE);
+
+        $result = $this->repository->deleteRole($id);
+
+        do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $id, $result);
+
+        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
+
+        $msg = $result ? trans('webed-acl::base.delete_role_success') : trans('webed-acl::base.delete_role_error');
+
+        return response()->json(response_with_messages($msg, !$result, $code), $code);
     }
 }

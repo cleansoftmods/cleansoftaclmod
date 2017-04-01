@@ -6,37 +6,31 @@ use WebEd\Base\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
 class PermissionRepositoryCacheDecorator extends EloquentBaseRepositoryCacheDecorator implements PermissionRepositoryContract
 {
     /**
-     * Register permission
-     * @param $name
-     * @param $alias
-     * @param $module
-     * @param bool $withEvent
-     * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @param string $name
+     * @param string $alias
+     * @param string $module
+     * @return $this
      */
-    public function registerPermission($name, $alias, $module, $withEvent = true, $force = true)
+    public function registerPermission($name, $alias, $module)
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }
 
     /**
      * @param string|array $alias
-     * @param bool $withEvent
-     * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermission($alias, $withEvent = true, $force = true)
+    public function unsetPermission($alias, $force = false)
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }
 
     /**
      * @param string|array $module
-     * @param bool $withEvent
      * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermissionByModule($module, $withEvent = true, $force = true)
+    public function unsetPermissionByModule($module, $force = false)
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }

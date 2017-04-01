@@ -1,56 +1,52 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
+use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
 
 class RoleRepositoryCacheDecorator extends EloquentBaseRepositoryCacheDecorator implements RoleRepositoryContract
 {
     /**
+     * @param $roleId
+     * @param array $data
+     * @return bool
+     */
+    public function syncPermissions($roleId, array $data)
+    {
+        return $this->afterUpdate(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * @param array|int $id
-     * @param bool $withEvent
-     * @return array
+     * @return bool
      */
-    public function deleteRole($id, $withEvent = true)
+    public function deleteRole($id)
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }
 
     /**
      * @param array $data
-     * @param bool $withEvent
-     * @return array
+     * @return int
      */
-    public function createRole($data, $withEvent = true)
+    public function createRole(array $data, array $permissions = [])
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }
 
     /**
-     * @param int $id
+     * @param $id
      * @param array $data
-     * @param bool $withEvent
-     * @return array
+     * @param array $permissions
+     * @return int|null
      */
-    public function updateRole($id, $data, $withEvent = true)
+    public function updateRole($id, array $data, array $permissions = [])
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
     }
 
     /**
-     * @param \WebEd\Base\ACL\Models\Role $model
-     * @param \Illuminate\Database\Eloquent\Collection|array $data
-     */
-    public function syncPermissions($model, $data)
-    {
-        $result = call_user_func_array([$this->getRepository(), __FUNCTION__], func_get_args());
-
-        $this->getCacheInstance()->flushCache();
-
-        return $result;
-    }
-
-    /**
-     * @param int|\WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract $id
+     * @param Role|int $id
      * @return array
      */
     public function getRelatedPermissions($id)

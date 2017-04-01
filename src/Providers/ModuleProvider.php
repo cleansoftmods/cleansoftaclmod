@@ -26,6 +26,9 @@ class ModuleProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/lang' => base_path('resources/lang/vendor/webed-acl'),
         ], 'lang');
+        $this->publishes([
+            __DIR__ . '/../../config' => base_path('config'),
+        ], 'config');
 
         app()->booted(function () {
             $this->app->register(BootstrapModuleServiceProvider::class);
@@ -41,6 +44,11 @@ class ModuleProvider extends ServiceProvider
     {
         //Load helpers
         load_module_helpers(__DIR__);
+
+        $configs = split_files_with_basename($this->app['files']->glob(__DIR__ . '/../../config/*.php'));
+        foreach ($configs as $key => $row) {
+            $this->mergeConfigFrom($row, $key);
+        }
 
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);

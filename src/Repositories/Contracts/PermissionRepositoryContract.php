@@ -3,26 +3,24 @@
 interface PermissionRepositoryContract
 {
     /**
-     * Register permission
-     * @param $name
-     * @param $alias
-     * @param $module
-     * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @param string $name
+     * @param string $alias
+     * @param string $module
+     * @return $this
      */
-    public function registerPermission($name, $alias, $module, $force = true);
+    public function registerPermission($name, $alias, $module);
 
     /**
      * @param string|array $alias
      * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermission($alias, $force = true);
+    public function unsetPermission($alias, $force = false);
 
     /**
      * @param string|array $module
      * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermissionByModule($module, $force = true);
+    public function unsetPermissionByModule($module, $force = false);
 }

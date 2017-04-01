@@ -1,5 +1,6 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
+use Illuminate\Http\Request;
 use WebEd\Base\ACL\Http\DataTables\PermissionsListDataTable;
 use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
@@ -19,11 +20,15 @@ class PermissionController extends BaseAdminController
 
         $this->repository = $repository;
 
-        $this->getDashboardMenu($this->module . '-permissions');
+        $this->middleware(function (Request $request, $next) {
+            $this->getDashboardMenu($this->module . '-permissions');
 
-        $this->breadcrumbs
-            ->addLink(trans('webed-acl::base.acl'))
-            ->addLink(trans('webed-acl::base.permissions'), route('admin::acl-permissions.index.get'));;
+            $this->breadcrumbs
+                ->addLink(trans('webed-acl::base.acl'))
+                ->addLink(trans('webed-acl::base.permissions'), route('admin::acl-permissions.index.get'));
+
+            return $next($request);
+        });
     }
 
     public function getIndex(PermissionsListDataTable $permissionsListDataTable)

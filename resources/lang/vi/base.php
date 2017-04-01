@@ -18,4 +18,9 @@ return [
         'slug' => 'Tên truy cập',
         'related_permissions' => 'Quyền hạn liên quan',
     ],
+
+    'update_role_success' => 'Chỉnh sửa vai trò thành công',
+    'update_role_error' => 'Chỉnh sửa vai trò thất bại',
+    'create_role_success' => 'Tạo mới vai trò thành công',
+    'create_role_error' => 'Tạo mới vai trò thất bại',
 ];

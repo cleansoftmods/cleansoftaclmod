@@ -1,7 +1,8 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
-use WebEd\Base\ACL\Models\Contracts\RoleModelContract;
+use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\Caching\Services\Traits\Cacheable;
+use WebEd\Base\Models\Contracts\BaseModelContract;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
@@ -11,108 +12,104 @@ class RoleRepository extends EloquentBaseRepository implements RoleRepositoryCon
 {
     use Cacheable;
 
-    protected $rules = [
-        'name' => 'required|between:3,100|string',
-        'slug' => 'required|between:3,100|unique:roles|alpha_dash',
-        'created_by' => 'required|min:0',
-        'updated_by' => 'required|min:0',
-    ];
-
-    protected $editableFields = [
-        'name',
-        'slug',
-        'created_by',
-        'updated_by',
-    ];
-
     /**
      * The roles with these alias cannot be deleted
      * @var array
      */
-    protected $cannotDelete = ['super-admin'];
+    protected $cannotDelete = [];
+
+    public function __construct(BaseModelContract $model)
+    {
+        parent::__construct($model);
+
+        $this->cannotDelete = array_merge(config('webed-acl.cannot_delete_roles', []), ['super-admin']);
+    }
 
     /**
-     * @param \WebEd\Base\ACL\Models\Role $model
-     * @param \Illuminate\Database\Eloquent\Collection|array $data
+     * @param $roleId
+     * @param array $data
+     * @return bool
      */
-    public function syncPermissions($model, $data)
+    public function syncPermissions($roleId, array $data)
     {
-        $model->permissions()->sync($data);
+        try {
+            $this->model
+                ->find($roleId)
+                ->permissions()
+                ->sync($data);
+            $this->resetModel();
+        } catch (\Exception $exception) {
+            $this->resetModel();
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * @param array|int $id
-     * @return array
+     * @return bool
      */
     public function deleteRole($id)
     {
-        $result = $this->model
-            ->whereNotIn('slug', $this->cannotDelete)
-            ->whereIn('id', (array)$id)
-            ->delete();
-
-        if (!$result['error']) {
-            return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
+        try {
+            $this->model
+                ->whereNotIn('slug', $this->cannotDelete)
+                ->whereIn('id', (array)$id)
+                ->delete();
+            $this->resetModel();
+        } catch (\Exception $exception) {
+            $this->resetModel();
+            return false;
         }
-        return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
+        return true;
     }
 
     /**
      * @param array $data
-     * @return array
+     * @return int
      */
-    public function createRole($data)
+    public function createRole(array $data, array $permissions = [])
     {
-        $result = $this->editWithValidate(0, $data, true, false);
-
-        if ($result['error']) {
-            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
-        }
+        $roleId = $this->create($data);
 
         /**
          * Sync permissions
          */
-        if (isset($data['permissions']) && $data['permissions']) {
-            $this->syncPermissions($result['data'], $data['permissions']);
+        if ($permissions) {
+            $this->syncPermissions($roleId, $permissions);
         }
 
-        $result = response_with_messages('Create role success', false, \Constants::SUCCESS_CODE, $result['data']);
-
-        return $result;
+        return $roleId;
     }
 
     /**
-     * @param int $id
+     * @param $id
      * @param array $data
-     * @return array
+     * @param array $permissions
+     * @return int|null
      */
-    public function updateRole($id, $data)
+    public function updateRole($id, array $data, array $permissions = [])
     {
-        $result = $this->editWithValidate($id, $data, false, true);
-
-        if ($result['error']) {
-            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
-        }
+        $roleId = parent::update($id, $data);
 
         /**
          * Sync permissions
          */
-        if (isset($data['permissions']) && is_array($data['permissions'])) {
-            $this->syncPermissions($result['data'], $data['permissions']);
+        if ($roleId && $permissions) {
+            $this->syncPermissions($roleId, $permissions);
         }
 
-        $result = response_with_messages('Update role success', false, \Constants::SUCCESS_CODE, $result['data']);
-
-        return $result;
+        return $roleId;
     }
 
     /**
-     * @param int|\WebEd\Base\ACL\Models\Contracts\RoleModelContract $id
+     * @param Role|int $id
      * @return array
      */
     public function getRelatedPermissions($id)
     {
-        if ($id instanceof RoleModelContract) {
+        if ($id instanceof Role) {
             $item = $id;
         } else {
             $item = $this->find($id);

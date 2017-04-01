@@ -10,18 +10,6 @@ class PermissionRepository extends EloquentBaseRepository implements PermissionR
 {
     use Cacheable;
 
-    protected $rules = [
-        'name' => 'required|between:3,100|string',
-        'slug' => 'required|between:3,100|unique:roles|alpha_dash',
-        'module' => 'required|max:255',
-    ];
-
-    protected $editableFields = [
-        'name',
-        'slug',
-        'module',
-    ];
-
     public function get(array $columns = ['*'])
     {
         $this->model = $this->model->orderBy('module', 'ASC');
@@ -29,72 +17,50 @@ class PermissionRepository extends EloquentBaseRepository implements PermissionR
     }
 
     /**
-     * Register permission
-     * @param $name
-     * @param $alias
-     * @param $module
-     * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @param string $name
+     * @param string $alias
+     * @param string $module
+     * @return $this
      */
-    public function registerPermission($name, $alias, $module, $force = true)
+    public function registerPermission($name, $alias, $module)
     {
-        $permission = $this->model->where(['slug' => $alias])->first();
-        if (!$permission) {
-            $result = $this->editWithValidate(0, [
-                'name' => $name,
-                'slug' => str_slug($alias),
-                'module' => $module,
-            ], true, false);
-            if (!$result['error']) {
-                if (!$force) {
-                    return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
-                }
-            }
-            if (!$force) {
-                return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
-            }
-        }
-        if (!$force) {
-            return response_with_messages('Permission alias exists', true, \Constants::ERROR_CODE);
-        }
+        $this->findWhereOrCreate([
+            'slug' => $alias
+        ], [
+            'name' => $name,
+            'module' => $module,
+        ]);
         return $this;
     }
 
     /**
      * @param string|array $alias
-     * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermission($alias, $force = true)
+    public function unsetPermission($alias, $force = false)
     {
-        $result = $this->model->whereIn('slug', (array)$alias)->delete();
-        if (!$result['error']) {
-            if (!$force) {
-                return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
-            }
+        if (is_string($alias)) {
+            $alias = [$alias];
         }
-        if (!$force) {
-            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
-        }
+        $method = $force ? 'forceDelete' : 'delete';
+        $this->model->whereIn('slug', $alias)->$method();
+        $this->resetModel();
         return $this;
     }
 
     /**
      * @param string|array $module
      * @param bool $force
-     * @return array|\WebEd\Base\ACL\Repositories\PermissionRepository
+     * @return $this
      */
-    public function unsetPermissionByModule($module, $force = true)
+    public function unsetPermissionByModule($module, $force = false)
     {
-        $result = $this->model->whereIn('module', (array)$module)->delete();
-        if (!$result['error']) {
-            if (!$force) {
-                return response_with_messages($result['messages'], false, \Constants::SUCCESS_NO_CONTENT_CODE);
-            }
+        if (is_string($module)) {
+            $module = [$module];
         }
-        if (!$force) {
-            return response_with_messages($result['messages'], true, \Constants::ERROR_CODE);
-        }
+        $method = $force ? 'forceDelete' : 'delete';
+        $this->model->whereIn('module', $module)->$method();
+        $this->resetModel();
         return $this;
     }
 }
