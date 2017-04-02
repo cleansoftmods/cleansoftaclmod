@@ -77,7 +77,7 @@
                     {!! Form::close() !!}
                 </div>
             </div>
-            @php do_action(BASE_ACTION_META_BOXES, 'main', 'webed-acl.roles.create', null) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'main', WEBED_ACL_ROLE . '.create', null) @endphp
         </div>
     </div>
 @endsection

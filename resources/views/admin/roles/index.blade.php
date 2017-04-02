@@ -33,7 +33,7 @@
                     {!! $dataTable or '' !!}
                 </div>
             </div>
-            @php do_action(BASE_ACTION_META_BOXES, 'main', 'webed-acl.roles.index', null) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'main', WEBED_ACL_ROLE . '.index', null) @endphp
         </div>
     </div>
 @endsection

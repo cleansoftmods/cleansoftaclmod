@@ -44,6 +44,12 @@ class BootstrapModuleMiddleware
             'permissions' => ['view-permissions'],
         ]);
 
+        admin_quick_link()->register('role', [
+            'title' => trans('webed-acl::base.role'),
+            'url' => route('admin::acl-roles.create.get'),
+            'icon' => 'icon-lock',
+        ]);
+
         return $next($request);
     }
 }

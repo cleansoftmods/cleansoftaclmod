@@ -8,6 +8,7 @@ return [
     'roles' => 'Vai trò',
     'all_roles' => 'Tất cả vai trò',
     'all_permissions' => 'Tất cả quyền hạn',
+    'role' => 'Vai trò',
 
     'create_role' => 'Thêm mới một vai trò',
     'edit_role' => 'Chỉnh sửa vai trò',

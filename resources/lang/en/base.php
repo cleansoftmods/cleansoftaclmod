@@ -8,6 +8,7 @@ return [
     'roles' => 'Roles',
     'all_roles' => 'All roles',
     'all_permissions' => 'All permissions',
+    'role' => 'Role',
 
     'create_role' => 'Create role',
     'edit_role' => 'Edit role',
