@@ -22,7 +22,7 @@ class BootstrapModuleMiddleware
         /**
          * Register to dashboard menu
          */
-        \DashboardMenu::registerItem([
+        dashboard_menu()->registerItem([
             'id' => 'webed-acl-roles',
             'priority' => 3.1,
             'parent_id' => null,
