@@ -110,11 +110,12 @@ class RoleController extends BaseAdminController
         $data = [
             'name' => $request->get('name'),
             'slug' => $request->get('slug'),
-            'permissions' => ($request->exists('permissions') ? $request->get('permissions') : []),
             'created_by' => $this->loggedInUser->id,
             'updated_by' => $this->loggedInUser->id,
         ];
-        $result = $this->repository->createRole($data);
+        $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
+
+        $result = $this->repository->createRole($data, $permissions);
 
         do_action(BASE_ACTION_AFTER_CREATE, WEBED_ACL_ROLE, $result);
 
@@ -186,11 +187,12 @@ class RoleController extends BaseAdminController
 
         $data = [
             'name' => $request->get('name'),
-            'permissions' => ($request->exists('permissions') ? $request->get('permissions') : []),
             'updated_by' => $this->loggedInUser->id,
         ];
 
-        $result = $this->repository->updateRole($item, $data);
+        $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
+
+        $result = $this->repository->updateRole($item, $data, $permissions);
 
         do_action(BASE_ACTION_AFTER_UPDATE, WEBED_ACL_ROLE, $id, $result);
 
