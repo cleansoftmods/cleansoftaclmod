@@ -53,7 +53,7 @@ if (!function_exists('has_roles')) {
      * @param array $roles
      * @return bool
      */
-    function has_roles($user, $roles = [])
+    function has_roles($user, array $roles = [])
     {
         if (!$user) {
             return false;
