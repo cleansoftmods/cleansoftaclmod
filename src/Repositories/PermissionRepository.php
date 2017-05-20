@@ -1,15 +1,10 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
-use WebEd\Base\Caching\Services\Traits\Cacheable;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
-
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
-use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class PermissionRepository extends EloquentBaseRepository implements PermissionRepositoryContract, CacheableContract
+class PermissionRepository extends EloquentBaseRepository implements PermissionRepositoryContract
 {
-    use Cacheable;
-
     public function get(array $columns = ['*'])
     {
         $this->model = $this->model->orderBy('module', 'ASC');

@@ -1,17 +1,12 @@
 <?php namespace WebEd\Base\ACL\Repositories;
 
 use WebEd\Base\ACL\Models\Role;
-use WebEd\Base\Caching\Services\Traits\Cacheable;
 use WebEd\Base\Models\Contracts\BaseModelContract;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
-
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
-use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-class RoleRepository extends EloquentBaseRepository implements RoleRepositoryContract, CacheableContract
+class RoleRepository extends EloquentBaseRepository implements RoleRepositoryContract
 {
-    use Cacheable;
-
     /**
      * The roles with these alias cannot be deleted
      * @var array
