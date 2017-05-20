@@ -55,18 +55,26 @@ class CheckUserACL
     }
 
     /**
+     * @param null $userId
      * @return array
      */
-    public function getRoles()
+    public function getRoles($userId = null)
     {
+        if ($userId) {
+            return array_get($this->roles, $userId);
+        }
         return $this->roles;
     }
 
     /**
+     * @param null $userId
      * @return array
      */
-    public function getPermissions()
+    public function getPermissions($userId = null)
     {
+        if ($userId) {
+            return array_get($this->permissions, $userId);
+        }
         return $this->permissions;
     }
 }

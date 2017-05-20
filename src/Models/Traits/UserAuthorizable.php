@@ -12,16 +12,38 @@ trait UserAuthorizable
     }
 
     /**
-     * @return bool
+     * Get all roles and permissions of current user
      */
-    public function isSuperAdmin()
+    public function setupUser()
     {
-        if (check_user_acl()->hasRoles($this->id, ['super-admin'])) {
-            return true;
+        if (!$this->id || check_user_acl()->getRoles($this->id)) {
+            return;
         }
 
         $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
         check_user_acl()->pushRoles($this->id, $relatedRoles);
+
+        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', 'users.id')
+            ->join('roles', 'users_roles.role_id', '=', 'roles.id')
+            ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
+            ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
+            ->where('users.id', '=', $this->id)
+            ->distinct()
+            ->groupBy('permissions.id', 'permissions.slug')
+            ->select('permissions.slug', 'permissions.id')
+            ->get()
+            ->pluck('slug')
+            ->toArray();
+        check_user_acl()->pushPermissions($this->id, $relatedPermissions);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        $this->setupUser();
+
         if (check_user_acl()->hasRoles($this->id, ['super-admin'])) {
             return true;
         }
@@ -38,7 +60,7 @@ trait UserAuthorizable
             return true;
         }
 
-        if(!is_array($roles)) {
+        if (!is_array($roles)) {
             $roles = func_get_args();
         }
 
@@ -52,12 +74,6 @@ trait UserAuthorizable
             return true;
         }
 
-        $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
-        check_user_acl()->pushRoles($this->id, $relatedRoles);
-
-        if (check_user_acl()->hasRoles($this->id, $roles)) {
-            return true;
-        }
         return false;
     }
 
@@ -71,7 +87,7 @@ trait UserAuthorizable
             return true;
         }
 
-        if(!is_array($permissions)) {
+        if (!is_array($permissions)) {
             $permissions = func_get_args();
         }
 
@@ -80,24 +96,6 @@ trait UserAuthorizable
         }
 
         $permissions = array_values($permissions);
-
-        if (check_user_acl()->hasPermissions($this->id, $permissions)) {
-            return true;
-        }
-
-        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', 'users.id')
-            ->join('roles', 'users_roles.role_id', '=', 'roles.id')
-            ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
-            ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
-            ->where('users.id', '=', $this->id)
-            ->distinct()
-            ->groupBy('permissions.id', 'permissions.slug')
-            ->select('permissions.slug')
-            ->get()
-            ->pluck('slug')
-            ->toArray();
-
-        check_user_acl()->pushPermissions($this->id, $relatedPermissions);
 
         if (check_user_acl()->hasPermissions($this->id, $permissions)) {
             return true;
