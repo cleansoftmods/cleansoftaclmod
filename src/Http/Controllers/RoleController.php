@@ -28,8 +28,8 @@ class RoleController extends BaseAdminController
             $this->getDashboardMenu($this->module . '-roles');
 
             $this->breadcrumbs
-                ->addLink(trans('webed-acl::base.acl'))
-                ->addLink(trans('webed-acl::base.roles'), route('admin::acl-roles.index.get'));
+                ->addLink(trans($this->module . '::base.acl'))
+                ->addLink(trans($this->module . '::base.roles'), route('admin::acl-roles.index.get'));
 
             return $next($request);
         });
@@ -41,7 +41,7 @@ class RoleController extends BaseAdminController
      */
     public function getIndex(RolesListDataTable $rolesListDataTable)
     {
-        $this->setPageTitle(trans('webed-acl::base.roles'));
+        $this->setPageTitle(trans($this->module . '::base.roles'));
 
         $this->dis['dataTable'] = $rolesListDataTable->run();
 
@@ -70,7 +70,7 @@ class RoleController extends BaseAdminController
         if ($this->request->get('customActionType', null) == 'group_action') {
             if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
                 return [
-                    'customActionMessage' => trans('webed-acl::base.do_not_have_permission'),
+                    'customActionMessage' => trans($this->module . '::base.do_not_have_permission'),
                     'customActionStatus' => 'danger',
                 ];
             }
@@ -81,7 +81,7 @@ class RoleController extends BaseAdminController
 
             do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $ids, $result);
 
-            $data['customActionMessage'] = $result ? trans('webed-acl::base.delete_role_success') : trans('webed-acl::base.delete_role_error');
+            $data['customActionMessage'] = $result ? trans($this->module . '::base.delete_role_success') : trans($this->module . '::base.delete_role_error');
             $data['customActionStatus'] = $result ? 'success' : 'danger';
         }
         return $data;
@@ -95,8 +95,8 @@ class RoleController extends BaseAdminController
     {
         do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.get');
 
-        $this->setPageTitle(trans('webed-acl::base.create_role'));
-        $this->breadcrumbs->addLink(trans('webed-acl::base.create_role'));
+        $this->setPageTitle(trans($this->module . '::base.create_role'));
+        $this->breadcrumbs->addLink(trans($this->module . '::base.create_role'));
 
         $this->dis['permissions'] = $permissionRepository->get();
 
@@ -122,7 +122,7 @@ class RoleController extends BaseAdminController
         $msgType = !$result ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages(trans('webed-acl::base.create_role_' . $msgType), $msgType)
+            ->addMessages(trans($this->module . '::base.create_role_' . $msgType), $msgType)
             ->showMessagesOnSession();
 
         if (!$result) {
@@ -149,14 +149,14 @@ class RoleController extends BaseAdminController
 
         if (!$item) {
             flash_messages()
-                ->addMessages(trans('webed-acl::base.role_not_exists'), 'danger')
+                ->addMessages(trans($this->module . '::base.role_not_exists'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->to(route('admin::acl-roles.index.get'));
         }
 
-        $this->setPageTitle(trans('webed-acl::base.edit_role'), '#' . $id . ' ' . $item->name);
-        $this->breadcrumbs->addLink(trans('webed-acl::base.edit_role'));
+        $this->setPageTitle(trans($this->module . '::base.edit_role'), '#' . $id . ' ' . $item->name);
+        $this->breadcrumbs->addLink(trans($this->module . '::base.edit_role'));
 
         $this->dis['object'] = $item;
 
@@ -179,7 +179,7 @@ class RoleController extends BaseAdminController
 
         if (!$item) {
             flash_messages()
-                ->addMessages(trans('webed-acl::base.role_not_exists'), 'danger')
+                ->addMessages(trans($this->module . '::base.role_not_exists'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->to(route('admin::acl-roles.index.get'));
@@ -199,7 +199,7 @@ class RoleController extends BaseAdminController
         $msgType = !$result ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages(trans('webed-acl::base.update_role_' . $msgType), $msgType)
+            ->addMessages(trans($this->module . '::base.update_role_' . $msgType), $msgType)
             ->showMessagesOnSession();
 
         if (!$result) {
@@ -228,7 +228,7 @@ class RoleController extends BaseAdminController
 
         $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
 
-        $msg = $result ? trans('webed-acl::base.delete_role_success') : trans('webed-acl::base.delete_role_error');
+        $msg = $result ? trans($this->module . '::base.delete_role_success') : trans($this->module . '::base.delete_role_error');
 
         return response()->json(response_with_messages($msg, !$result, $code), $code);
     }
