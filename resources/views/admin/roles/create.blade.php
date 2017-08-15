@@ -22,7 +22,11 @@
                     </h3>
                 </div>
                 <div class="box-body">
-                    {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::acl-roles.create.post')]) !!}
+                    {!! form()->open([
+                        'class' => 'js-validate-form form-update-field-group',
+                        'novalidate' => 'novalidate',
+                        'url' => request()->fullUrl(),
+                    ]) !!}
                     <div class="form-group">
                         <label class="control-label">{{ trans('webed-acl::base.form.name') }}</label>
                         <input type="text"
@@ -74,7 +78,7 @@
                             <i class="fa fa-check"></i> {{ trans('webed-core::base.form.save_and_continue') }}
                         </button>
                     </div>
-                    {!! Form::close() !!}
+                    {!! form()->close() !!}
                 </div>
             </div>
             @php do_action(BASE_ACTION_META_BOXES, 'main', WEBED_ACL_ROLE, null) @endphp
