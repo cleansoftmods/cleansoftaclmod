@@ -5,7 +5,7 @@ use WebEd\Base\Models\EloquentBase as BaseModel;
 
 class Permission extends BaseModel implements PermissionModelContract
 {
-    protected $table = 'permissions';
+    protected $table = 'we_permissions';
 
     protected $primaryKey = 'id';
 
@@ -18,6 +18,6 @@ class Permission extends BaseModel implements PermissionModelContract
      */
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'roles_permissions', 'permission_id', 'role_id');
+        return $this->belongsToMany(Role::class, 'we_roles_permissions', 'permission_id', 'role_id');
     }
 }

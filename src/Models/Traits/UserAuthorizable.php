@@ -8,7 +8,7 @@ trait UserAuthorizable
      */
     public function roles()
     {
-        return $this->belongsToMany(\WebEd\Base\ACL\Models\Role::class, 'users_roles', 'user_id', 'role_id');
+        return $this->belongsToMany(\WebEd\Base\ACL\Models\Role::class, 'we_users_roles', 'user_id', 'role_id');
     }
 
     /**
@@ -23,14 +23,14 @@ trait UserAuthorizable
         $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
         check_user_acl()->pushRoles($this->id, $relatedRoles);
 
-        $relatedPermissions = static::join('users_roles', 'users_roles.user_id', '=', 'users.id')
-            ->join('roles', 'users_roles.role_id', '=', 'roles.id')
-            ->join('roles_permissions', 'roles_permissions.role_id', '=', 'roles.id')
-            ->join('permissions', 'roles_permissions.permission_id', '=', 'permissions.id')
-            ->where('users.id', '=', $this->id)
+        $relatedPermissions = static::join('we_users_roles', 'we_users_roles.user_id', '=', 'we_users.id')
+            ->join('we_roles', 'we_users_roles.role_id', '=', 'we_roles.id')
+            ->join('we_roles_permissions', 'we_roles_permissions.role_id', '=', 'we_roles.id')
+            ->join('we_permissions', 'we_roles_permissions.permission_id', '=', 'we_permissions.id')
+            ->where('we_users.id', '=', $this->id)
             ->distinct()
-            ->groupBy('permissions.id', 'permissions.slug')
-            ->select('permissions.slug', 'permissions.id')
+            ->groupBy('we_permissions.id', 'we_permissions.slug')
+            ->select('we_permissions.slug', 'we_permissions.id')
             ->get()
             ->pluck('slug')
             ->toArray();
