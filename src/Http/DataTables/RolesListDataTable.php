@@ -13,9 +13,18 @@ class RolesListDataTable extends AbstractDataTables
      */
     protected $model;
 
+    /**
+     * @var string
+     */
+    protected $screenName = WEBED_ACL_ROLE;
+
     public function __construct()
     {
-        $this->model = Role::select('id', 'name', 'slug');
+        $this->model = do_filter(
+            FRONT_FILTER_DATA_TABLES_MODEL,
+            Role::select('id', 'name', 'slug'),
+            $this->screenName
+        );
     }
 
     /**
@@ -24,10 +33,6 @@ class RolesListDataTable extends AbstractDataTables
     public function headings()
     {
         return [
-            'id' => [
-                'title' => 'ID',
-                'width' => '1%',
-            ],
             'name' => [
                 'title' => trans('webed-acl::datatables.role.heading.name'),
                 'width' => '50%',
@@ -50,7 +55,6 @@ class RolesListDataTable extends AbstractDataTables
     {
         return [
             ['data' => 'id', 'name' => 'id', 'searchable' => false, 'orderable' => false],
-            ['data' => 'viewID', 'name' => 'id'],
             ['data' => 'name', 'name' => 'name'],
             ['data' => 'slug', 'name' => 'slug'],
             ['data' => 'actions', 'name' => 'actions', 'searchable' => false, 'orderable' => false],
@@ -65,15 +69,11 @@ class RolesListDataTable extends AbstractDataTables
         $this->setAjaxUrl(route('admin::acl-roles.index.post'), 'POST');
 
         $this
-            ->addFilter(1, form()->text('id', '', [
-                'class' => 'form-control form-filter input-sm',
-                'placeholder' => '...'
-            ]))
-            ->addFilter(2, form()->text('name', '', [
+            ->addFilter(1, form()->text('name', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => trans('webed-core::datatables.search') . '...',
             ]))
-            ->addFilter(3, form()->text('slug', '', [
+            ->addFilter(2, form()->text('slug', '', [
                 'class' => 'form-control form-filter input-sm',
                 'placeholder' => trans('webed-core::datatables.search') . '...',
             ]));
@@ -98,9 +98,6 @@ class RolesListDataTable extends AbstractDataTables
                     ['id[]', $item->id]
                 ]);
             })
-            ->addColumn('viewID', function ($item) {
-                return $item->id;
-            })
             ->addColumn('actions', function ($item) {
                 /*Edit link*/
                 $deleteLink = route('admin::acl-roles.delete.delete', ['id' => $item->id]);
@@ -108,15 +105,13 @@ class RolesListDataTable extends AbstractDataTables
 
                 /*Buttons*/
                 $editBtn = link_to($editLink, trans('webed-core::datatables.edit'), ['class' => 'btn btn-outline green btn-sm']);
-                $deleteBtn = ($item->status != 'deleted') ? form()->button(trans('webed-core::datatables.delete'), [
+                $deleteBtn = form()->button(trans('webed-core::datatables.delete'), [
                     'title' => trans('webed-core::datatables.delete_this_item'),
                     'data-ajax' => $deleteLink,
                     'data-method' => 'DELETE',
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                ]) : '';
-
-                $deleteBtn = ($item->status != 'deleted') ? $deleteBtn : '';
+                ]);
 
                 return $editBtn . $deleteBtn;
             });

@@ -1,6 +1,9 @@
 <?php namespace WebEd\Base\ACL\Http\Controllers;
 
 use Illuminate\Http\Request;
+use WebEd\Base\ACL\Actions\CreateRoleAction;
+use WebEd\Base\ACL\Actions\DeleteRoleAction;
+use WebEd\Base\ACL\Actions\UpdateRoleAction;
 use WebEd\Base\ACL\Http\DataTables\RolesListDataTable;
 use WebEd\Base\ACL\Http\Requests\CreateRoleRequest;
 use WebEd\Base\ACL\Http\Requests\UpdateRoleRequest;
@@ -77,12 +80,13 @@ class RoleController extends BaseAdminController
 
             $ids = (array)$this->request->get('id', []);
 
-            $result = $this->repository->deleteRole($ids);
+            $action = app(DeleteRoleAction::class);
+            foreach ($ids as $id) {
+                $this->deleteDelete($action, $id);
+            }
 
-            do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $ids, $result);
-
-            $data['customActionMessage'] = $result ? trans($this->module . '::base.delete_role_success') : trans($this->module . '::base.delete_role_error');
-            $data['customActionStatus'] = $result ? 'success' : 'danger';
+            $data['customActionMessage'] = trans($this->module . '::base.delete_role_success');
+            $data['customActionStatus'] = 'success';
         }
         return $data;
     }
@@ -103,34 +107,29 @@ class RoleController extends BaseAdminController
         return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'create.get')->viewAdmin('roles.create');
     }
 
-    public function postCreate(CreateRoleRequest $request)
+    public function postCreate(CreateRoleRequest $request, CreateRoleAction $action)
     {
-        do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.post');
-
         $data = [
             'name' => $request->get('name'),
             'slug' => $request->get('slug'),
             'created_by' => $this->loggedInUser->id,
-            'updated_by' => $this->loggedInUser->id,
         ];
         $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
 
-        $result = $this->repository->createRole($data, $permissions);
+        $result = $action->run($data, $permissions);
 
-        do_action(BASE_ACTION_AFTER_CREATE, WEBED_ACL_ROLE, $result);
-
-        $msgType = !$result ? 'danger' : 'success';
+        $msgType = $result['error'] ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages(trans($this->module . '::base.create_role_' . $msgType), $msgType)
+            ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 
-        if (!$result) {
+        if ($result['error']) {
             return redirect()->back()->withInput();
         }
 
         if ($this->request->has('_continue_edit')) {
-            return redirect()->to(route('admin::acl-roles.edit.get', ['id' => $result]));
+            return redirect()->to(route('admin::acl-roles.edit.get', ['id' => $result['data']['id']]));
         }
 
         return redirect()->to(route('admin::acl-roles.index.get'));
@@ -171,20 +170,14 @@ class RoleController extends BaseAdminController
         return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_ACL_ROLE, 'edit.get', $id)->viewAdmin('roles.edit');
     }
 
-    public function postEdit(UpdateRoleRequest $request, $id)
+    /**
+     * @param UpdateRoleRequest $request
+     * @param UpdateRoleAction $action
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEdit(UpdateRoleRequest $request, UpdateRoleAction $action, $id)
     {
-        $item = $this->repository->find($id);
-
-        $item = do_filter(BASE_FILTER_BEFORE_UPDATE, $item, WEBED_ACL_ROLE, 'edit.post');
-
-        if (!$item) {
-            flash_messages()
-                ->addMessages(trans($this->module . '::base.role_not_exists'), 'danger')
-                ->showMessagesOnSession();
-
-            return redirect()->to(route('admin::acl-roles.index.get'));
-        }
-
         $data = [
             'name' => $request->get('name'),
             'updated_by' => $this->loggedInUser->id,
@@ -192,21 +185,15 @@ class RoleController extends BaseAdminController
 
         $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
 
-        $result = $this->repository->updateRole($item, $data, $permissions);
+        $result = $action->run($id, $data, $permissions);
 
-        do_action(BASE_ACTION_AFTER_UPDATE, WEBED_ACL_ROLE, $id, $result);
-
-        $msgType = !$result ? 'danger' : 'success';
+        $msgType = $result['error'] ? 'danger' : 'success';
 
         flash_messages()
-            ->addMessages(trans($this->module . '::base.update_role_' . $msgType), $msgType)
+            ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 
-        if (!$result) {
-            return redirect()->back();
-        }
-
-        if ($this->request->has('_continue_edit')) {
+        if ($result['error'] || $this->request->has('_continue_edit')) {
             return redirect()->back();
         }
 
@@ -214,22 +201,14 @@ class RoleController extends BaseAdminController
     }
 
     /**
-     * Delete role
+     * @param DeleteRoleAction $action
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteDelete($id)
+    public function deleteDelete(DeleteRoleAction $action, $id)
     {
-        $id = do_filter(BASE_FILTER_BEFORE_DELETE, $id, WEBED_ACL_ROLE);
+        $result = $action->run($id);
 
-        $result = $this->repository->deleteRole($id);
-
-        do_action(BASE_ACTION_AFTER_DELETE, WEBED_ACL_ROLE, $id, $result);
-
-        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
-
-        $msg = $result ? trans($this->module . '::base.delete_role_success') : trans($this->module . '::base.delete_role_error');
-
-        return response()->json(response_with_messages($msg, !$result, $code), $code);
+        return response()->json($result, $result['response_code']);
     }
 }

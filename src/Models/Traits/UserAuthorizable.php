@@ -1,5 +1,7 @@
 <?php namespace WebEd\Base\ACL\Models\Traits;
 
+use WebEd\Base\ACL\Models\Role;
+
 trait UserAuthorizable
 {
     /**
@@ -8,7 +10,7 @@ trait UserAuthorizable
      */
     public function roles()
     {
-        return $this->belongsToMany(\WebEd\Base\ACL\Models\Role::class, 'we_users_roles', 'user_id', 'role_id');
+        return $this->belongsToMany(Role::class, webed_db_prefix() . 'users_roles', 'user_id', 'role_id');
     }
 
     /**
@@ -23,14 +25,14 @@ trait UserAuthorizable
         $relatedRoles = $this->roles()->select('slug')->get()->pluck('slug')->toArray();
         check_user_acl()->pushRoles($this->id, $relatedRoles);
 
-        $relatedPermissions = static::join('we_users_roles', 'we_users_roles.user_id', '=', 'we_users.id')
-            ->join('we_roles', 'we_users_roles.role_id', '=', 'we_roles.id')
-            ->join('we_roles_permissions', 'we_roles_permissions.role_id', '=', 'we_roles.id')
-            ->join('we_permissions', 'we_roles_permissions.permission_id', '=', 'we_permissions.id')
-            ->where('we_users.id', '=', $this->id)
+        $relatedPermissions = static::join(webed_db_prefix() . 'users_roles', webed_db_prefix() . 'users_roles.user_id', '=', webed_db_prefix() . 'users.id')
+            ->join(webed_db_prefix() . 'roles', webed_db_prefix() . 'users_roles.role_id', '=', webed_db_prefix() . 'roles.id')
+            ->join(webed_db_prefix() . 'roles_permissions', webed_db_prefix() . 'roles_permissions.role_id', '=', webed_db_prefix() . 'roles.id')
+            ->join(webed_db_prefix() . 'permissions', webed_db_prefix() . 'roles_permissions.permission_id', '=', webed_db_prefix() . 'permissions.id')
+            ->where(webed_db_prefix() . 'users.id', '=', $this->id)
             ->distinct()
-            ->groupBy('we_permissions.id', 'we_permissions.slug')
-            ->select('we_permissions.slug', 'we_permissions.id')
+            ->groupBy(webed_db_prefix() . 'permissions.id', webed_db_prefix() . 'permissions.slug')
+            ->select(webed_db_prefix() . 'permissions.slug', webed_db_prefix() . 'permissions.id')
             ->get()
             ->pluck('slug')
             ->toArray();

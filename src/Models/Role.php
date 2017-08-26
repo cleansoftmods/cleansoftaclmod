@@ -6,7 +6,7 @@ use WebEd\Base\Users\Models\User;
 
 class Role extends BaseModel implements RoleModelContract
 {
-    protected $table = 'we_roles';
+    protected $table = 'roles';
 
     protected $primaryKey = 'id';
 
@@ -19,7 +19,7 @@ class Role extends BaseModel implements RoleModelContract
      */
     public function permissions()
     {
-        return $this->belongsToMany(Permission::class, 'we_roles_permissions', 'role_id', 'permission_id');
+        return $this->belongsToMany(Permission::class, webed_db_prefix() . 'roles_permissions', 'role_id', 'permission_id');
     }
 
     /**
@@ -27,7 +27,7 @@ class Role extends BaseModel implements RoleModelContract
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'we_users_roles', 'role_id', 'user_id');
+        return $this->belongsToMany(User::class, webed_db_prefix() . 'users_roles', 'role_id', 'user_id');
     }
 
     /**

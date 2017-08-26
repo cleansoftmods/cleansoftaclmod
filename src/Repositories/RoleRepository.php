@@ -86,12 +86,12 @@ class RoleRepository extends EloquentBaseRepository implements RoleRepositoryCon
      */
     public function updateRole($id, array $data, array $permissions = [])
     {
-        $roleId = parent::update($id, $data);
+        $roleId = $this->update($id, $data);
 
         /**
          * Sync permissions
          */
-        if ($roleId && $permissions) {
+        if ($roleId) {
             $this->syncPermissions($roleId, $permissions);
         }
 
