@@ -7,28 +7,11 @@ class InstallModuleServiceProvider extends ServiceProvider
     protected $module = 'webed-acl';
 
     /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        app()->booted(function () {
-            $this->booted();
-        });
-    }
-
-    /**
      * Register the application services.
      *
      * @return void
      */
     public function register()
-    {
-
-    }
-
-    protected function booted()
     {
         acl_permission()
             ->registerPermission('View roles', 'view-roles', $this->module)
