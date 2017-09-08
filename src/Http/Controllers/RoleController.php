@@ -218,7 +218,7 @@ class RoleController extends BaseAdminController
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteDelete($id)
+    public function postDelete($id)
     {
         $id = do_filter(BASE_FILTER_BEFORE_DELETE, $id, WEBED_ACL_ROLE);
 

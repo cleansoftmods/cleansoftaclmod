@@ -41,8 +41,8 @@ Route::group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $r
             ->name('admin::acl-roles.edit.post')
             ->middleware('has-permission:edit-roles');
 
-        $router->delete('{id}', 'RoleController@deleteDelete')
-            ->name('admin::acl-roles.delete.delete')
+        $router->post('{id}', 'RoleController@postDelete')
+            ->name('admin::acl-roles.delete.post')
             ->middleware('has-permission:delete-roles');
     });
 
