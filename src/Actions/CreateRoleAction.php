@@ -24,6 +24,8 @@ class CreateRoleAction extends AbstractAction
     public function run(array $data, array $permissions = [])
     {
         do_action(BASE_ACTION_BEFORE_CREATE, WEBED_ACL_ROLE, 'create.post');
+        
+        $data['created_by'] = get_current_logged_user_id();
 
         $result = $this->repository->createRole($data, $permissions);
 

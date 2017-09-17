@@ -91,7 +91,7 @@ class RolesListDataTable extends AbstractDataTables
      */
     protected function fetchDataForAjax()
     {
-        return datatable()->of($this->model)
+        return webed_datatable()->of($this->model)
             ->rawColumns(['actions'])
             ->editColumn('id', function ($item) {
                 return form()->customCheckbox([
@@ -100,7 +100,7 @@ class RolesListDataTable extends AbstractDataTables
             })
             ->addColumn('actions', function ($item) {
                 /*Edit link*/
-                $deleteLink = route('admin::acl-roles.delete.delete', ['id' => $item->id]);
+                $deleteLink = route('admin::acl-roles.delete.post', ['id' => $item->id]);
                 $editLink = route('admin::acl-roles.edit.get', ['id' => $item->id]);
 
                 /*Buttons*/
@@ -108,7 +108,7 @@ class RolesListDataTable extends AbstractDataTables
                 $deleteBtn = form()->button(trans('webed-core::datatables.delete'), [
                     'title' => trans('webed-core::datatables.delete_this_item'),
                     'data-ajax' => $deleteLink,
-                    'data-method' => 'DELETE',
+                    'data-method' => 'POST',
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
                 ]);

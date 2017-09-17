@@ -70,7 +70,7 @@ class RoleController extends BaseAdminController
     protected function groupAction()
     {
         $data = [];
-        if ($this->request->get('customActionType', null) == 'group_action') {
+        if ($this->request->input('customActionType', null) == 'group_action') {
             if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
                 return [
                     'customActionMessage' => trans($this->module . '::base.do_not_have_permission'),
@@ -78,11 +78,11 @@ class RoleController extends BaseAdminController
                 ];
             }
 
-            $ids = (array)$this->request->get('id', []);
+            $ids = (array)$this->request->input('id', []);
 
             $action = app(DeleteRoleAction::class);
             foreach ($ids as $id) {
-                $this->deleteDelete($action, $id);
+                $this->postDelete($action, $id);
             }
 
             $data['customActionMessage'] = trans($this->module . '::base.delete_role_success');
@@ -110,11 +110,10 @@ class RoleController extends BaseAdminController
     public function postCreate(CreateRoleRequest $request, CreateRoleAction $action)
     {
         $data = [
-            'name' => $request->get('name'),
-            'slug' => $request->get('slug'),
-            'created_by' => $this->loggedInUser->id,
+            'name' => $request->input('name'),
+            'slug' => $request->input('slug'),
         ];
-        $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
+        $permissions = ($request->exists('permissions') ? $request->input('permissions') : []);
 
         $result = $action->run($data, $permissions);
 
@@ -179,11 +178,10 @@ class RoleController extends BaseAdminController
     public function postEdit(UpdateRoleRequest $request, UpdateRoleAction $action, $id)
     {
         $data = [
-            'name' => $request->get('name'),
-            'updated_by' => $this->loggedInUser->id,
+            'name' => $request->input('name'),
         ];
 
-        $permissions = ($request->exists('permissions') ? $request->get('permissions') : []);
+        $permissions = ($request->exists('permissions') ? $request->input('permissions') : []);
 
         $result = $action->run($id, $data, $permissions);
 
@@ -205,7 +203,7 @@ class RoleController extends BaseAdminController
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteDelete(DeleteRoleAction $action, $id)
+    public function postDelete(DeleteRoleAction $action, $id)
     {
         $result = $action->run($id);
 

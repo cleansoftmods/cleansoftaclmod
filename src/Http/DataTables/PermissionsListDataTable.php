@@ -2,9 +2,9 @@
 
 use WebEd\Base\ACL\Models\Permission;
 use WebEd\Base\Http\DataTables\AbstractDataTables;
-use Yajra\Datatables\Engines\CollectionEngine;
-use Yajra\Datatables\Engines\EloquentEngine;
-use Yajra\Datatables\Engines\QueryBuilderEngine;
+use Yajra\DataTables\CollectionDataTable;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\QueryDataTable;
 
 class PermissionsListDataTable extends AbstractDataTables
 {
@@ -81,11 +81,11 @@ class PermissionsListDataTable extends AbstractDataTables
     }
 
     /**
-     * @return CollectionEngine|EloquentEngine|QueryBuilderEngine|mixed
+     * @return CollectionDataTable|EloquentDataTable|QueryDataTable|mixed
      */
     public function fetchDataForAjax()
     {
-        return datatable()->of($this->model)
+        return webed_datatable()->of($this->model)
             ->editColumn('name', function ($item) {
                 if (lang()->has($item->module . '::permissions.' . $item->slug)) {
                     return trans($item->module . '::permissions.' . $item->slug);
