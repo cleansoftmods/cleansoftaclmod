@@ -13,15 +13,24 @@ class PermissionsListDataTable extends AbstractDataTables
      */
     protected $model;
 
+    /**
+     * @var string
+     */
+    protected $screenName = WEBED_ACL_PERMISSION;
+
     public function __construct()
     {
-        $this->model = Permission::select(['name', 'slug', 'module', 'id']);
+        $this->model = do_filter(
+            FRONT_FILTER_DATA_TABLES_MODEL,
+            Permission::select(['name', 'slug', 'module', 'id']),
+            $this->screenName
+        );
     }
 
     /**
      * @return array
      */
-    public function headings()
+    public function headings(): array
     {
         return [
             'id' => [
@@ -46,7 +55,7 @@ class PermissionsListDataTable extends AbstractDataTables
     /**
      * @return array
      */
-    public function columns()
+    public function columns(): array
     {
         return [
             ['data' => 'id', 'name' => 'id'],
@@ -59,7 +68,7 @@ class PermissionsListDataTable extends AbstractDataTables
     /**
      * @return string
      */
-    public function run()
+    public function run(): string
     {
         $this->setAjaxUrl(route('admin::acl-permissions.index.post'), 'POST');
 
@@ -92,5 +101,13 @@ class PermissionsListDataTable extends AbstractDataTables
                 }
                 return $item->name;
             });
+    }
+
+    /**
+     * @return array
+     */
+    protected function groupAction(): array
+    {
+        return [];
     }
 }

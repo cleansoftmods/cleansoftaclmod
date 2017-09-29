@@ -10,11 +10,10 @@ use WebEd\Base\ACL\Http\Requests\UpdateRoleRequest;
 use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\Contracts\PermissionRepositoryContract;
-use Yajra\Datatables\Engines\BaseEngine;
 
 class RoleController extends BaseAdminController
 {
-    protected $module = 'webed-acl';
+    protected $module = WEBED_ACL;
 
     /**
      * @var \WebEd\Base\ACL\Repositories\RoleRepository
@@ -53,42 +52,12 @@ class RoleController extends BaseAdminController
 
     /**
      * Get all roles
-     * @param RolesListDataTable|BaseEngine $rolesListDataTable
+     * @param RolesListDataTable $rolesListDataTable
      * @return \Illuminate\Http\JsonResponse
      */
     public function postListing(RolesListDataTable $rolesListDataTable)
     {
-        $data = $rolesListDataTable->with($this->groupAction());
-
-        return do_filter(BASE_FILTER_CONTROLLER, $data, WEBED_ACL_ROLE, 'index.post', $this);
-    }
-
-    /**
-     * Handle group actions
-     * @return array
-     */
-    protected function groupAction()
-    {
-        $data = [];
-        if ($this->request->input('customActionType', null) == 'group_action') {
-            if(!$this->userRepository->hasPermission($this->loggedInUser, ['delete-roles'])) {
-                return [
-                    'customActionMessage' => trans($this->module . '::base.do_not_have_permission'),
-                    'customActionStatus' => 'danger',
-                ];
-            }
-
-            $ids = (array)$this->request->input('id', []);
-
-            $action = app(DeleteRoleAction::class);
-            foreach ($ids as $id) {
-                $this->postDelete($action, $id);
-            }
-
-            $data['customActionMessage'] = trans($this->module . '::base.delete_role_success');
-            $data['customActionStatus'] = 'success';
-        }
-        return $data;
+        return do_filter(BASE_FILTER_CONTROLLER, $rolesListDataTable, WEBED_ACL_ROLE, 'index.post', $this);
     }
 
     /**

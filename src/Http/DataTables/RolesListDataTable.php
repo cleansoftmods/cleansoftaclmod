@@ -1,10 +1,8 @@
 <?php namespace WebEd\Base\ACL\Http\DataTables;
 
+use WebEd\Base\ACL\Actions\DeleteRoleAction;
 use WebEd\Base\ACL\Models\Role;
 use WebEd\Base\Http\DataTables\AbstractDataTables;
-use Yajra\Datatables\Engines\CollectionEngine;
-use Yajra\Datatables\Engines\EloquentEngine;
-use Yajra\Datatables\Engines\QueryBuilderEngine;
 
 class RolesListDataTable extends AbstractDataTables
 {
@@ -30,7 +28,7 @@ class RolesListDataTable extends AbstractDataTables
     /**
      * @return array
      */
-    public function headings()
+    public function headings(): array
     {
         return [
             'name' => [
@@ -51,7 +49,7 @@ class RolesListDataTable extends AbstractDataTables
     /**
      * @return array
      */
-    public function columns()
+    public function columns(): array
     {
         return [
             ['data' => 'id', 'name' => 'id', 'searchable' => false, 'orderable' => false],
@@ -64,7 +62,7 @@ class RolesListDataTable extends AbstractDataTables
     /**
      * @return string
      */
-    public function run()
+    public function run(): string
     {
         $this->setAjaxUrl(route('admin::acl-roles.index.post'), 'POST');
 
@@ -87,7 +85,7 @@ class RolesListDataTable extends AbstractDataTables
     }
 
     /**
-     * @return CollectionEngine|EloquentEngine|QueryBuilderEngine|mixed
+     * @return mixed
      */
     protected function fetchDataForAjax()
     {
@@ -115,5 +113,34 @@ class RolesListDataTable extends AbstractDataTables
 
                 return $editBtn . $deleteBtn;
             });
+    }
+
+    /**
+     * @return array
+     */
+    protected function groupAction(): array
+    {
+        $request = request();
+
+        $data = [];
+        if ($request->input('customActionType', null) == 'group_action') {
+            if(!has_permissions(get_current_logged_user(), ['delete-roles'])) {
+                return [
+                    'customActionMessage' => trans(WEBED_ACL . '::base.do_not_have_permission'),
+                    'customActionStatus' => 'danger',
+                ];
+            }
+
+            $ids = (array)$request->input('id', []);
+
+            $action = app(DeleteRoleAction::class);
+            foreach ($ids as $id) {
+                $action->run($id);
+            }
+
+            $data['customActionMessage'] = trans(WEBED_ACL . '::base.delete_role_success');
+            $data['customActionStatus'] = 'success';
+        }
+        return $data;
     }
 }
